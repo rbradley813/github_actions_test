@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>dev.ikm.build</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.64.0-SNAPSHOT</version>
+        <artifactId>gitub_actions_test_parent</artifactId>
+        <version>1.64.0-TEST-SNAPSHO</version>
     </parent>
-    <artifactId>java-parent</artifactId>
+    <artifactId>gitub_actions_test_java-parent</artifactId>
     <name>Java Parent</name>
     <description>
         The Java Parent that helps to define the build processes that should be used across projects. This is versioned
