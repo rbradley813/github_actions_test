@@ -101,7 +101,7 @@ jobs:
           git push -u origin $FEATURE_BRANCH
 
       - name: Create PR CLI
-        run: gh pr create --base ${{env.TRUNK_BRANCH}} --head "${{github.event.repository.owner}}:${{env.FEATURE_BRANCH}}" --repo ikmdev/${{github.event.repository.name}}
+        run: gh pr create --base ${{env.TRUNK_BRANCH}} --head "${{github.event.repository.owner}}:${{env.FEATURE_BRANCH}}" --repo ikmdev/${{github.event.repository.name}} --title "I am testing" --body "Spongebob Squarepants"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
