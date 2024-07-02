@@ -102,6 +102,8 @@ jobs:
 
       - name: Create PR CLI
         run: gh pr create --base ${{env.TRUNK_BRANCH}} --head "${{github.event.repository.owner}}:${{env.FEATURE_BRANCH}}" --repo ikmdev/${{github.event.repository.name}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       # - name: Create PR 
       #   run: |
