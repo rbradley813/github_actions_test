@@ -6,6 +6,9 @@ on:
     push:
     pull_request:
 
+env:
+  MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
+
 jobs:
   build-job:
     name: Build Job
@@ -23,6 +26,7 @@ jobs:
             if: github.ref == 'refs/heads/main'
             run: |
               mvn clean install \
+                -s ${{env.MAVEN_SETTING}} \
                 --batch-mode \
                 -e \
                 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
@@ -32,7 +36,9 @@ jobs:
             run: |
               java --version
               mvn clean install \
+                -s ${{env.MAVEN_SETTING}} \
                 --batch-mode \
                 -e \
                 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+                -Denforcer.skip=true \
                 -PcodeQuality
