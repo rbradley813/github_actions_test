@@ -11,7 +11,7 @@
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
         Package type. This is versioned and if you want to use a different version of the pom, you can simply change
         the parent version and it will adjust all of the properties being used throughout, as the properties and
-        plugins will be inherited by subprojects.
+        plugins will be inherited by subprojects
     </description>
     <packaging>pom</packaging>
 
