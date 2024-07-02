@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.ikm.build</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.64.0-SNAPSHOT</version>
+    <artifactId>gitub_actions_test_parent</artifactId>
+    <version>1.64.0-TEST-SNAPSHOT</version>
     <name>General Build Parent</name>
     <description>
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
