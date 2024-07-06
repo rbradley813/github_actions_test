@@ -83,7 +83,7 @@ jobs:
  
   call_release_workflow_with_custom_inputs:
     needs: initialization
-    uses: ${{github.repository}}/.github/workflows/reusable_workflow.yaml@main
+    uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
     permissions: write-all
     with:
       snapshot_version: ${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}}
