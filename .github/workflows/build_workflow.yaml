@@ -1,6 +1,6 @@
 name: Build Workflow
 
-run-name: 'Build Workflow'
+run-name: 'Build Workflow -- ${{github.ref_name}}'
 
 on:
     push:
