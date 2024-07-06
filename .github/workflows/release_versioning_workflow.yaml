@@ -135,6 +135,8 @@ jobs:
        needs: increment_version
        uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
        permissions: write-all
+       secrets: inherit
        with:
         snapshot_version: ${{needs.increment_version.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT
         release_version: ${{needs.increment_version.outputs.RELEASE_VERSION}}
+        
