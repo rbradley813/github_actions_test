@@ -1,6 +1,6 @@
 name: Publish Artifacts Workflow
 
-run-name: 'Publish Artifacts'
+run-name: 'Publish Artifacts -- ${{github.event.workflow_run.head_branch}}'
 
 on:
    workflow_run:
@@ -23,8 +23,6 @@ jobs:
         MAVEN_FILE: '/home/ec2-user/maven/.m2/settings.xml'
 
       steps:  
-        - name: Print
-          run: echo ${{toJson(github)}}
         - name: Setup Maven Action
           uses: s4u/setup-maven-action@v1.14.0
           with:
