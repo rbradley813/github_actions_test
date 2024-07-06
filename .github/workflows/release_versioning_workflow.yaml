@@ -48,7 +48,7 @@ jobs:
 
     call_release_workflow_with_custom_inputs:
        needs: get_custom_inputs
-       uses: ${{github.repository}}/.github/workflows/reusable_workflow.yaml@main
+       uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
        permissions: write-all
        with:
         snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION}}
@@ -133,7 +133,7 @@ jobs:
 
     call_release_workflow:
        needs: increment_version
-       uses: ${{github.repository}}/.github/workflows/reusable_workflow.yaml@main
+       uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
        permissions: write-all
        with:
         snapshot_version: ${{needs.increment_version.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT
