@@ -6,7 +6,6 @@ on:
    workflow_run:
     workflows:
       - Build Workflow
-      - Release Workflo
     types:
       - completed
         
@@ -24,13 +23,15 @@ jobs:
         MAVEN_FILE: '/home/ec2-user/maven/.m2/settings.xml'
 
       steps:  
+        - name: Print
+          run: echo ${{toJson(github)}}
         - name: Setup Maven Action
           uses: s4u/setup-maven-action@v1.14.0
           with:
             checkout-fetch-depth: 0
             java-version: 21
-            java-distribution: temurin
-            maven-version: 3.8.7
+            java-distribution: adopt
+            maven-version: 3.9.0
         
         - name: Checkout Forked Code Repository
           uses: actions/checkout@v4
@@ -42,22 +43,6 @@ jobs:
         - name: Checkout ikmdev Code Repository
           if:   github.event.workflow_run.event != 'pull_request' && github.event.workflow.name == 'Build Workflow'
           uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-
-        - name: Checkout Tag Code 
-          uses: actions/checkout@v4
-          if:   github.event.workflow.name == 'Release Workflow'
-          with:
-            ref: ${{steps.getRecentTag.outputs.tag}}
-        
-        - name: If Release Change Artifact Repository ID
-          if: github.event.workflow.name == 'Release Workflow'
-          run: echo "ARTIFACT_REPOSITORY_ID=maven-releases" >> $GITHUB_OUTPUT
-
-        - name: Print Output
-          if: github.event.workflow.name == 'Release Workflow'
-          run: echo ${{steps.getRecentTag.outputs.tag}}
 
         - name: Deploy To Nexus
           run: |
@@ -73,22 +58,6 @@ jobs:
                       -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
                       -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
 
-
-        - name: Publish To OSSRH (Maven Central Staging)
-          if: github.event.workflow.name == 'Release Workflow'
-          run: |
-                    mvn deploy \
-                        --batch-mode \
-                        -e \
-                        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                        -DskipTests \
-                        -DskipITs \
-                        -Dmaven.main.skip \
-                        -Dmaven.test.skip \
-                        -s ${{env.MAVEN_FILE}} \
-                        -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
-                        -DrepositoryIdOSSRH='true' \
-                        -PstageOSSRH -Dgpg.passphrase='${{secrets.GPG_PASSPHRASE}}'
 
   
 
