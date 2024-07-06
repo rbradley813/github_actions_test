@@ -1,6 +1,6 @@
 name: Publish Artifacts Workflow
 
-run-name: 'Publish Artifacts'
+run-name: 'Publish Artifacts -- ${{github.event.workflow_run.head_branch}}'
 
 on:
    workflow_run:
