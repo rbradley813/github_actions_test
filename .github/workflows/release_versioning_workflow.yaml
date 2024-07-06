@@ -50,6 +50,7 @@ jobs:
        needs: get_custom_inputs
        uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
        permissions: write-all
+       secrets: inherit
        with:
         snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION}}
         release_version: ${{needs.get_custom_inputs.outputs.RELEASE_VERSION}}

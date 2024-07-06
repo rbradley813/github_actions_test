@@ -85,6 +85,7 @@ jobs:
     needs: initialization
     uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
     permissions: write-all
+    secrets: inherit
     with:
       snapshot_version: ${{needs.initialization.outputs.NEXT_SNAPSHOT_VERSION}}
       release_version: ${{needs.initialization.outputs.RELEASE_VERSION}}
