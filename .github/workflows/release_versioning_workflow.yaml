@@ -38,29 +38,35 @@ jobs:
           run: |
             echo "Please Enter A Development Or Release Version"
             exit 1
+
         - name: Stop if Development input is empty
           if: env.ACTION_INPUT == 'Custom' && env.DEVELOPMENT_VERSION_INPUT == ''
           run: |
             echo "Please Enter A Development Version"
             exit 1
+
         - name: Checkout Code Repository
           uses: actions/checkout@v4
+
         - name: Downloading Java
           uses: actions/setup-java@v4
           with:
             java-version: '21'
             distribution: 'adopt'
+
         - name: Get Current POM Version
           id: getPOMVersion
           run: echo "POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
         - name: Print Version
           run: echo ${{steps.getPOMVersion.outputs.POM_VERSION}}
+
         - name: Split version code
           uses: xom9ikk/split@v1.1
           id: splitVersion
           with:
               string: ${{steps.getPOMVersion.outputs.POM_VERSION}}
-              separator: -SNAPSHOT
+              separator: "-"
               limit: -1
 
         
@@ -134,10 +140,13 @@ jobs:
                 else
                  echo "VERSION_NUMBER=${{needs.get_major_minor_patch_inputs.outputs._PATCH}}" >> $GITHUB_ENV
                 fi
+
             - name: Print Version
               run: echo ${{env.ACTION_INPUT}} -- ${{env.VERSION_NUMBER}}
+
             - name: Increment Version
               run: echo "NEW_VERSION_NUMBER=$((${{env.VERSION_NUMBER}} + 1))" >> $GITHUB_ENV
+
             - name: Generate New Snapshot Version Output
               id: nextSnapshotVersion
               shell: bash
@@ -150,6 +159,7 @@ jobs:
                 else
                  echo "NEXT_SNAPSHOT_VERSION=${{needs.get_major_minor_patch_inputs.outputs._MAJOR}}.${{needs.get_major_minor_patch_inputs.outputs._MINOR}}.${{env.NEW_VERSION_NUMBER}}" >> $GITHUB_OUTPUT
                 fi
+                
             - name: Print Versions
               run: |
                echo "Next Development Version: ${{steps.nextSnapshotVersion.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT"
