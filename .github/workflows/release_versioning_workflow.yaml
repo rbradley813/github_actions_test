@@ -85,14 +85,15 @@ jobs:
                echo "SNAPSHOT_VERSION=${{env.CUSTOM_SNAPSHOT_VERSION}}" >> $GITHUB_OUTPUT
                echo "RELEASE_VERSION=${{env.RELEASE_VERSION_INPUT || needs.get_current_version.outputs.CURRENT_RELEASE_VERSION}}" >> $GITHUB_OUTPUT
 
-    # call_release_workflow_with_custom_inputs:
-    #    needs: get_custom_inputs
-    #    uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
-    #    permissions: write-all
-    #    secrets: inherit
-    #    with:
-    #     snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION}}
-    #     release_version: ${{needs.get_custom_inputs.outputs.RELEASE_VERSION}}
+    call_release_workflow_with_custom_inputs:
+       needs: get_custom_inputs
+       name: Call Release Workflow With Custom Inputs
+       uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
+       permissions: write-all
+       secrets: inherit
+       with:
+        snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION}}
+        release_version: ${{needs.get_custom_inputs.outputs.RELEASE_VERSION}}
             
               
     get_major_minor_patch_inputs:
@@ -151,17 +152,17 @@ jobs:
                 fi
             - name: Print Versions
               run: |
-               echo "Next Development Version: ${{steps.nextSnapshotVersion.outputs.NEXT_SNAPSHOT_VERSION}}"
+               echo "Next Development Version: ${{steps.nextSnapshotVersion.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT"
                echo "Release Version: ${{needs.get_major_minor_patch_inputs.outputs.RELEASE_VERSION}}"
 
-    call_release_workflow:
-       needs:
-        - get_custom_inputs 
+    call_release_workflow_incremented_version:
+       needs: 
         - increment_version
        uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
+       name: Call Release Workflow With Incremented Version
        permissions: write-all
        secrets: inherit
        with:
-        snapshot_version: ${{needs.get_custom_inputs.outputs.SNAPSHOT_VERSION || needs.increment_version.outputs.NEXT_SNAPSHOT_VERSION}} 
-        release_version: ${{needs.get_custom_inputs.outputs.RELEASE_VERSION || needs.increment_version.outputs.RELEASE_VERSION}}
+        snapshot_version: ${{needs.increment_version.outputs.NEXT_SNAPSHOT_VERSION}}-SNAPSHOT 
+        release_version: ${{needs.increment_version.outputs.RELEASE_VERSION}}
         
