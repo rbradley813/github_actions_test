@@ -87,6 +87,7 @@ jobs:
 
     call_release_workflow_with_custom_inputs:
        needs: get_custom_inputs
+       name: Call Release Workflow With Custom Inputs
        uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
        permissions: write-all
        secrets: inherit
@@ -158,6 +159,7 @@ jobs:
        needs: 
         - increment_version
        uses: ikmdev/github_actions_test/.github/workflows/reusable_release_workflow.yaml@main
+       name: Call Release Workflow With Incremented Version
        permissions: write-all
        secrets: inherit
        with:
