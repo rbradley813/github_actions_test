@@ -38,6 +38,46 @@ jobs:
             repository: ${{github.actor}}/${{github.event.repository.name}}
             ref: ${{github.event.workflow_run.head_branch}}
 
+        - name: Maven Settings File
+          uses: whelk-io/maven-settings-xml-action@v22
+          with:
+              servers: > 
+                          [
+                            {
+                              "id": "nexus"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_MIRROR_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            }
+                          ] 
+              profiles: >
+                         [{
+                              "id": "inject-application-properties",
+                              "properties": {
+                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
+                                  "altReleaseDeploymentRepository": "${{vars.NEXUS_RELEASE_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-releases"
+                              }
+                         }]
+              active_profiles: > 
+                         [
+                            "inject-application-properties"
+                         ]
+              mirrors: >
+                         [{
+                             "id": "${{vars.NEXUS_MIRROR_ID}}",
+                             "name": "${{vars.NEXUS_MIRROR_ID}}",
+                             "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
+                             "mirrorOf": "*"
+                         }]
+              output_file: .m2/settings.xml
+
         - name: Checkout ikmdev Code Repository
           if:   github.event.workflow_run.event != 'pull_request' && github.event.workflow.name == 'Build Workflow'
           uses: actions/checkout@v4
@@ -52,7 +92,7 @@ jobs:
                       -DskipITs \
                       -Dmaven.main.skip \
                       -Dmaven.test.skip \
-                      -s ${{env.MAVEN_FILE}} \
+                      -s '/home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' \
                       -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
                       -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
 
