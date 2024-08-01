@@ -37,6 +37,10 @@ jobs:
           with:
             repository: ${{github.actor}}/${{github.event.repository.name}}
             ref: ${{github.event.workflow_run.head_branch}}
+        
+        - name: Checkout ikmdev Code Repository
+          if:   github.event.workflow_run.event != 'pull_request' && github.event.workflow.name == 'Build Workflow'
+          uses: actions/checkout@v4
 
         - name: Maven Settings File
           uses: whelk-io/maven-settings-xml-action@v22
@@ -78,9 +82,6 @@ jobs:
                          }]
               output_file: .m2/settings.xml
 
-        - name: Checkout ikmdev Code Repository
-          if:   github.event.workflow_run.event != 'pull_request' && github.event.workflow.name == 'Build Workflow'
-          uses: actions/checkout@v4
 
         - name: Deploy To Nexus
           run: |
