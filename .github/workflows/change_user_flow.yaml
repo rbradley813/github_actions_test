@@ -23,4 +23,5 @@ jobs:
             run: |
               whoami
               sudo -u ec2-user -i whoami
+              git config -l
   
