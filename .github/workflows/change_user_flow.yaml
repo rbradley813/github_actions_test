@@ -22,7 +22,5 @@ jobs:
           - name: Change User
             run: |
               whoami
-              sudo -u ec2-user whoami
-              whoami
-              git config -l
+              sudo -u ec2-user bash -c 'git config -l'
   
