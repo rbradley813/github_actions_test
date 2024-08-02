@@ -1,0 +1,26 @@
+name: Change User Flow
+
+run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
+
+on:
+    push:
+    pull_request:
+
+env:
+  MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
+
+jobs:
+  build-job:
+    name: Build Job
+    runs-on: self-hosted
+    if: github.repository_owner == 'ikmdev'
+    steps:
+          - name: PWD
+            run: pwd
+          - name: Who Am I
+            run: whoami
+          - name: Change User
+            run: |
+              whoami
+              sudo -u ec2-user -i whoami
+  
