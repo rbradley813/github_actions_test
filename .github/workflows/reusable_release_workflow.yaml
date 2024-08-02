@@ -60,6 +60,8 @@ jobs:
 
       - name: Create tag
         run: |
+          sudo su - ec2-user
+          whoami
           git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
           git add .
           git commit -m 'Release ${{inputs.release_version}}'
@@ -74,7 +76,7 @@ jobs:
 
       - name: Commit & Push
         run: |
-          su - ec2-user
+          sudo su - ec2-user
           whoami
           git add .
           git commit -m 'Set next dev version to ${{inputs.snapshot_version}}'
