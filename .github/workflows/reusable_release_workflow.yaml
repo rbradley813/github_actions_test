@@ -61,8 +61,7 @@ jobs:
       - name: Create tag
         run: |
           sudo -u ec2-user bash -c \
-          'git config --global --add safe.directory /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
-           git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
+          'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
            git add .;
            git commit -m 'Release ${{inputs.release_version}}';
            git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force;'
