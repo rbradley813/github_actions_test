@@ -61,10 +61,10 @@ jobs:
       - name: Create tag
         run: |
           sudo -u ec2-user bash -c \
-          'sudo git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
-           sudo git add .;
-           sudo git commit -m 'Release ${{inputs.release_version}}';
-           sudo git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force;'
+          'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
+           git add .;
+           git commit -m 'Release ${{inputs.release_version}}';
+           git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force;'
 
       - name: Set Dev Version
         run: |
@@ -76,10 +76,10 @@ jobs:
       - name: Commit & Push
         run: |
           sudo -u ec2-user bash -c \
-          'sudo git add .;
-           sudo git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
-           sudo git push origin HEAD:main;
-           sudo git push --tags origin;'
+          'git add .;
+           git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
+           git push origin HEAD:main;
+           git push --tags origin;'
 
   # Creating a release
   create_release:
