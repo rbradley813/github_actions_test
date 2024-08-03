@@ -43,20 +43,22 @@ jobs:
 
       - name: Set Release Version
         run: |
-          mvn -B versions:set \
+          sudo -u ec2-user bash -c \
+          'mvn -B versions:set \
           -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{inputs.release_version}} \
-          -DgenerateBackupPoms=false
+          -DgenerateBackupPoms=false'
 
       - name: Build Release Version
         run: |
-          mvn -version
+          sudo -u ec2-user bash -c \
+          'mvn -version
           mvn clean install \
                 -s ${{env.MAVEN_SETTING}} \
                 --batch-mode \
                 -e \
                 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                -PcodeQuality,release-enforcement
+                -PcodeQuality,release-enforcement'
 
       - name: Create tag
         run: |
