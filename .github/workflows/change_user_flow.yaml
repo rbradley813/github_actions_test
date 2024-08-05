@@ -21,11 +21,6 @@ jobs:
             run: whoami
           - name: Default Maven Version
             run: mvn -version
-          - name: Set up Java
-            uses: actions/setup-java@v4
-            with:
-              java-version: '21'
-              distribution: 'adopt'
           - name: Change User
             run: |
               whoami
