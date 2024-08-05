@@ -55,9 +55,8 @@ jobs:
       - name: Create tag
         run: |
           sudo -u ec2-user bash -c \
-          'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
-           git config user.name "IKM DevOps Engineer"
-           git add .;
+          'git add .;
+           git config user.name "IKM DevOps Engineer";
            git commit -m 'Release ${{inputs.release_version}}';
            git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force;'
 
