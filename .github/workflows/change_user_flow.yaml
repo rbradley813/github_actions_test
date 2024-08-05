@@ -30,6 +30,7 @@ jobs:
                 sudo -u ec2-user bash -c \
                 'date > date.txt;
                 git add .;
+                git config user.name "IKM DevOps Engineer";
                 git commit -m"Date into text file"
                 git push origin HEAD:main
                 git branch;'
