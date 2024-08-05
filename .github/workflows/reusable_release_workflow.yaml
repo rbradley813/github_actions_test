@@ -60,6 +60,7 @@ jobs:
       - name: Create tag
         run: |
            git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+           git pull -p
            git add .
            git config user.name "ikmdevops"
            git commit -m 'Release ${{inputs.release_version}}'
