@@ -31,16 +31,7 @@ jobs:
     runs-on: self-hosted
     permissions:
       contents: write
-
     steps:
-      - name: Setup Maven Action
-        uses: s4u/setup-maven-action@v1.14.0
-        with:
-          checkout-fetch-depth: 0
-          java-version: 21
-          java-distribution: adopt
-          maven-version: 3.9.0
-
       - name: Set Release Version
         run: |
           sudo -u ec2-user bash -c \
