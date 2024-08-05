@@ -35,7 +35,7 @@ jobs:
       - name: Set Release Version
         run: |
           sudo -u ec2-user bash -c \
-          'sudo CHOWN -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
+          'sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
            mvn -B versions:set \
           -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{inputs.release_version}} \
