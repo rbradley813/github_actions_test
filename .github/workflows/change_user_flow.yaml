@@ -20,7 +20,7 @@ jobs:
           - name: Who Am I
             run: whoami
           - name: Default Maven Version
-            run: mvn version
+            run: mvn -version
           - name: Change User
             run: |
               whoami
