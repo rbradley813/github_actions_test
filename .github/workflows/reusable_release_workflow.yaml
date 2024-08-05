@@ -35,7 +35,8 @@ jobs:
       - name: Set Release Version
         run: |
           sudo -u ec2-user bash -c \
-          'mvn -B versions:set \
+          'sudo CHOWN -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
+           mvn -B versions:set \
           -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{inputs.release_version}} \
           -DgenerateBackupPoms=false'
@@ -44,7 +45,7 @@ jobs:
         run: |
           sudo -u ec2-user bash -c \
           'mvn -version
-          mvn clean install \
+           mvn clean install \
                 -s ${{env.MAVEN_SETTING}} \
                 --batch-mode \
                 -e \
