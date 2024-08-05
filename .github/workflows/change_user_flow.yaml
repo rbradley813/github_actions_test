@@ -27,17 +27,6 @@ jobs:
             run: |
               whoami
               sudo -u ec2-user bash -c 'mvn -version'
-          - name: Checkout Code Repository
-            uses: actions/checkout@v4
-          - name: Commit & Push
-            run: |
-                sudo -u ec2-user bash -c \
-                'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
-                sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
-                date >> date.txt;
-                git add .;
-                git commit -m"Date into text file"
-                git push origin HEAD:main
-                git branch;'
+         
 
   
