@@ -33,7 +33,8 @@ jobs:
             run: |
                 sudo -u ec2-user bash -c \
                 'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
-                date > date.txt;
+                sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
+                date >> date.txt;
                 git add .;
                 git config user.name "ikmdevops";
                 git commit -m"Date into text file"
