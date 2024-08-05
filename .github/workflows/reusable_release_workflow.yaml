@@ -35,7 +35,8 @@ jobs:
       - name: Set Release Version
         run: |
           sudo -u ec2-user bash -c \
-          'sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
+          'export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el8.x86_64/;
+          sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
            mvn -B versions:set \
           -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{inputs.release_version}} \
