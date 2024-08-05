@@ -32,6 +32,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
       - name: Set Release Version
         run: |
           sudo -u ec2-user bash -c \
