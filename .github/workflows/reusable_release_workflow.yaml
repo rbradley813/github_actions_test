@@ -73,6 +73,7 @@ jobs:
         run: |
           sudo -u ec2-user bash -c \
           'git add .;
+           git branch;
            git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
            git push origin HEAD:main;
            git push --tags origin;'
