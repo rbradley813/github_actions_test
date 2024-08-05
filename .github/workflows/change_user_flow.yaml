@@ -28,7 +28,10 @@ jobs:
           - name: Commit & Push
             run: |
                 sudo -u ec2-user bash -c \
-                'git checkout -b main;
+                'date > date.txt;
+                git add .;
+                git commit -m"Date into text file"
+                git push origin HEAD:main
                 git branch;'
 
   

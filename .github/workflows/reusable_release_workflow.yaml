@@ -74,7 +74,7 @@ jobs:
           'git add .;
            git branch;
            git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
-           git push origin ${{env.BRANCH_NAME}};
+           git push origin HEAD:${{env.BRANCH_NAME}};
            git push --tags origin;
            git branch --all;'
 
