@@ -28,7 +28,8 @@ jobs:
           - name: Commit & Push
             run: |
                 sudo -u ec2-user bash -c \
-                'date > date.txt;
+                'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
+                date > date.txt;
                 git add .;
                 git config user.name "IKM DevOps Engineer";
                 git commit -m"Date into text file"
