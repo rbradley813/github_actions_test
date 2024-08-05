@@ -75,7 +75,7 @@ jobs:
           'git add .;
            git branch;
            git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
-           git push origin HEAD:main;
+           git push origin HEAD:${{env.BRANCH_NAME}};
            git push --tags origin;'
 
   # Creating a release
