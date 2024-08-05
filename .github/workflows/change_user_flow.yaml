@@ -25,4 +25,8 @@ jobs:
             run: |
               whoami
               sudo -u ec2-user bash -c 'mvn -version'
+          - name: Commit & Push
+            run: |
+                sudo -u ec2-user bash -c \
+                'git branch;'
   
