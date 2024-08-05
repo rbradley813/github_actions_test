@@ -31,7 +31,7 @@ jobs:
                 'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
                 date > date.txt;
                 git add .;
-                git config user.name "IKM DevOps Engineer";
+                git config user.name "ikmdevops";
                 git commit -m"Date into text file"
                 git push origin HEAD:main
                 git branch;'
