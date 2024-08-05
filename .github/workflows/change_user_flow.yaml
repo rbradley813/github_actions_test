@@ -19,6 +19,8 @@ jobs:
             run: pwd
           - name: Who Am I
             run: whoami
+          - name: Default Maven Version
+            run: mvn version
           - name: Change User
             run: |
               whoami
