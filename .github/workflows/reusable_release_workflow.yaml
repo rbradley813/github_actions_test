@@ -28,57 +28,55 @@ jobs:
   #Setting versioning for build and tags
   set_build_and_tag_release_and_set_next_dev_version:
     name: Set, Build, Tag Release Version & Set Next Version
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
       - name: Set Release Version
         run: |
-          sudo -u ec2-user bash -c \
-          'sudo chown -R "$USER" /home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}};
-           mvn -B versions:set \
-          -s ${{env.MAVEN_SETTING}} \
+          mvn -B versions:set \
           -DnewVersion=${{inputs.release_version}} \
-          -DgenerateBackupPoms=false'
+          -DgenerateBackupPoms=false
 
       - name: Build Release Version
         run: |
-          sudo -u ec2-user bash -c \
-          'mvn -version
+           mvn -version
            mvn clean install \
-                -s ${{env.MAVEN_SETTING}} \
                 --batch-mode \
                 -e \
                 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                -PcodeQuality,release-enforcement'
+                -PcodeQuality,release-enforcement
 
       - name: Create tag
         run: |
-          sudo -u ec2-user bash -c \
-          'git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git;
-           git add .;
-           git commit -m 'Release ${{inputs.release_version}}';
-           git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force;'
+           git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+           git add .
+           git config 
+           git commit -m 'Release ${{inputs.release_version}}'
+           git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force
 
       - name: Set Dev Version
         run: |
           mvn -B versions:set \
-          -s ${{env.MAVEN_SETTING}} \
           -DnewVersion=${{inputs.snapshot_version}} \
           -DgenerateBackupPoms=false
 
       - name: Commit & Push
         run: |
-          sudo -u ec2-user bash -c \
-          'git add .;
-           git branch;
-           git commit -m 'Set next dev version to ${{inputs.snapshot_version}}';
-           git push origin HEAD:${{env.BRANCH_NAME}};
-           git push --tags origin;
-           git branch --all;'
+           git add .
+           git commit -m 'Set next dev version to ${{inputs.snapshot_version}}'
+           git push origin HEAD:main
+           git push --tags origin
 
   # Creating a release
   create_release:
