@@ -28,5 +28,7 @@ jobs:
           - name: Commit & Push
             run: |
                 sudo -u ec2-user bash -c \
-                'git branch;'
+                'git checkout main;
+                git branch;'
+
   
