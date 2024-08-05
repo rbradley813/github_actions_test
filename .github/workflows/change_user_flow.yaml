@@ -13,6 +13,8 @@ jobs:
   build-job:
     name: Build Job
     runs-on: self-hosted
+    permissions:
+      contents: write
     if: github.repository_owner == 'ikmdev'
     steps:
           - name: PWD
