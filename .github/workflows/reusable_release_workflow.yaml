@@ -59,7 +59,7 @@ jobs:
 
       - name: Create tag
         run: |
-           git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
+           git remote set-url origin https://git:${{secrets.IKMDEVOPS_PAT_TOKEN}}@github.com/${{github.repository}}.git
            git pull -p
            git add .
            git config user.name "ikmdevops"
