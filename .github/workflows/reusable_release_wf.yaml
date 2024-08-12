@@ -63,19 +63,21 @@ jobs:
 
       - name: Create tag
         run: |
-           git remote set-url origin https://git:${{secrets.IKMDEVOPS_PAT_TOKEN}}@github.com/${{github.repository}}.git
-           git pull -p
-           git add .
-           git config user.name "ikmdevops"
-           git config user.email ${{vars.IKMDEVOPS_EMAIL}}
-           git commit -m 'Release ${{inputs.release_version}}'
-           git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force
+              git remote set-url origin https://git:${{secrets.IKMDEVOPS_PAT_TOKEN}}@github.com/${{github.repository}}.git
+              git pull -p
+              git add .
+              git config user.name "ikmdevops"
+              git config user.email ${{vars.IKMDEVOPS_EMAIL}}
+              git commit -m 'Release ${{inputs.release_version}}'
+              git tag -a ${{inputs.release_version}} -m '${{inputs.release_version}}' --force
+
 
       - name: Set Dev Version
         run: |
           mvn -B versions:set \
           -DnewVersion=${{inputs.snapshot_version}} \
           -DgenerateBackupPoms=false
+
 
       - name: Commit & Push
         run: |
