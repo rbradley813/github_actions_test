@@ -127,19 +127,17 @@ jobs:
     
         - name: Maven Build
           run: |
-            sudo -u ec2-user bash -c \
-            '/home/ec2-user/.sdkman/candidates/maven/current/bin/mvn --version
+            /home/ec2-user/.sdkman/candidates/maven/current/bin/mvn --version
             /home/ec2-user/.sdkman/candidates/maven/current/bin/mvn clean install \
               --batch-mode \
               -e \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              -PcodeQuality'
+              -PcodeQuality
     
     
         - name: Publish To OSSRH (Maven Central Staging)
           run: |
-             sudo -u ec2-user bash -c \
-              '/home/ec2-user/.sdkman/candidates/maven/current/bin/mvn deploy \
+              /home/ec2-user/.sdkman/candidates/maven/current/bin/mvn deploy \
                   --batch-mode \
                   -e \
                   -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
@@ -150,7 +148,7 @@ jobs:
                   -s ${{env.MAVEN_SETTING}} \
                   -DrepositoryId='maven-releases' \
                   -DrepositoryIdOSSRH='true' \
-                  -PstageOSSRH -Dgpg.passphrase=${{secrets.SELF_HOSTED_GPG_PASSPHRASE}}'
+                  -PstageOSSRH -Dgpg.passphrase=${{secrets.SELF_HOSTED_GPG_PASSPHRASE}}
         
     
          
