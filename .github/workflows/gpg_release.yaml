@@ -1,4 +1,4 @@
-name: Release Workflow
+name: GPG Release Test
 
 run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
@@ -88,6 +88,8 @@ jobs:
     if: github.repository_owner == 'ikmdev'
     permissions:
       contents: write
+    outputs:
+      RELEASE_VERSION: ${{needs.initilization.outputs.RELEASE_VERSION}}
     steps:
           - name: Setup Java
             uses: actions/setup-java@v4
@@ -96,7 +98,7 @@ jobs:
              java-version: '21'
              
           - name: Build IKMDEV Code
-            uses: ikmdev/maven-release-action@main
+            uses: ikmdev/maven-release-action@testing
             with:
               branch_name: ${{env.BRANCH_NAME}}
               ikmdevops_pat: ${{env.IKMDEVOPS_PAT}}
@@ -108,4 +110,41 @@ jobs:
               ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
               ossrh_gpg_key: ${{secrets.GPG_KEY}}
 
+  publish:
+     name: Release Job
+     needs: release-job
+     runs-on: self-hosted
+     if: github.repository_owner == 'ikmdev'
+     steps:
+             
+        - name: Checkout Code Repository
+          uses: actions/checkout@v4
+          with:
+            ref: ${{needs.release-job.outputs.RELEASE_VERSION}}
+          
+    
+        - name: Maven Build
+          run: |
+            mvn clean install \
+              --batch-mode \
+              -e \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              -PcodeQuality
+    
+    
+        - name: Publish To OSSRH (Maven Central Staging)
+          run: |
+              mvn deploy \
+                  --batch-mode \
+                  -e \
+                  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+                  -DskipTests \
+                  -DskipITs \
+                  -Dmaven.main.skip \
+                  -Dmaven.test.skip \
+                  -DrepositoryId='maven-releases' \
+                  -DrepositoryIdOSSRH='true' \
+                  -PstageOSSRH -Dgpg.passphrase=${{secrets.SELF_HOSTED_GPG_PASSPHRASE}}
         
+    
+         
