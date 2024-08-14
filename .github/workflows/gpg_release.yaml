@@ -11,7 +11,7 @@ env:
     TRUNK_BRANCH_NAME: 'main'
 
 jobs:
-  initialization:
+  release:
     name: Initialization
     runs-on: ubuntu-24.04
     outputs:
@@ -90,9 +90,8 @@ jobs:
           branch_name: ${{env.BRANCH_NAME}}
           ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           github_token: ${{secrets.GITHUB_TOKEN}}
-          gpg-private-key: ${{env.GPG_KEY}}
-          next_snapshot_version: ${{needs.initilization.outputs.NEXT_SNAPSHOT_VERSION}}
-          release_version: ${{needs.initilization.outputs.RELEASE_VERSION}}
+          next_snapshot_version: ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}
+          release_version: ${{steps.splitCurrentVersion.outputs._0}}
           ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
           ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
           gpg_key: ${{secrets.GPG_KEY}}
