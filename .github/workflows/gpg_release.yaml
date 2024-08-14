@@ -12,6 +12,8 @@ env:
     IKMDEVOPS_PAT: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     GPG_PASSPHRASE: ${{secrets.SELF_HOSTED_GPG_PASSPHRASE}}
+    MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
+
     
 
 jobs:
@@ -125,6 +127,7 @@ jobs:
     
         - name: Maven Build
           run: |
+            mvn --version
             mvn clean install \
               --batch-mode \
               -e \
@@ -142,6 +145,7 @@ jobs:
                   -DskipITs \
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
+                  -s ${{env.MAVEN_SETTING}} \
                   -DrepositoryId='maven-releases' \
                   -DrepositoryIdOSSRH='true' \
                   -PstageOSSRH -Dgpg.passphrase=${{secrets.SELF_HOSTED_GPG_PASSPHRASE}}
