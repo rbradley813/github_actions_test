@@ -17,6 +17,9 @@ jobs:
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v4
+
+          - name: Current Path
+            run: pwd
            
       
           - name: Setup Java
@@ -55,5 +58,5 @@ jobs:
           - name: Upload Installer
             uses: actions/upload-artifact@v4
             with:
-             name: my-artifact
-             path: application/target/dist/snapshot-installer/*
+             name: test-artifact
+             path: $PWD/application/target/dist/snapshot-installer/*
