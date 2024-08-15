@@ -39,7 +39,6 @@ jobs:
             run: |
               echo "jpackageAppName=Komet-SNAPSHOT-MACOS-${{github.ref_name}}" >> $GITHUB_ENV
               echo "jpackageAppVersion=${{steps.get_current_version.outputs.POM_VERSION}}-BUILD_NUMBER" >> $GITHUB_ENV
-              echo "MAVEN_INSTALLER_ARGS=$MAVEN_INSTALLER_ARGS -D"jpackage.app.name"=$jpackageAppName -D"jpackage.app.dest"=target/dist/snapshot-installer -D"jpackage.app.version"=$jpackageAppVersion" >> $GITHUB_ENV
     
           - name: Build Installers
             run: |
