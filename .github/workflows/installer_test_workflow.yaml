@@ -19,7 +19,7 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Current Path
-            run: echo "PWD=(pwd)" >> $GITHUB_ENV
+            run: echo "PWD=$(pwd)" >> $GITHUB_ENV
            
       
           - name: Setup Java
