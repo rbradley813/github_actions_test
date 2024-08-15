@@ -426,6 +426,55 @@
         </profile>
 
         <profile>
+           <profile>
+            <id>create-installer</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <jpackage.app.name>Komet</jpackage.app.name>
+                <jpackage.app.version>${project.version}</jpackage.app.version>
+                <jpackage.app.dest>target/dist/installer</jpackage.app.dest>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <name>${jpackage.app.name}</name>
+                            <appVersion>${jpackage.app.version}</appVersion>
+                            <!-- Requires Semantic Versioning with major version > zero -->
+                            <destination>${jpackage.app.dest}</destination>
+                            <resourceDir>${jpackage.resourceDir}</resourceDir>
+                            <type>${jpackage.type}</type>
+                            <icon>${jpackage.icon}</icon>
+                            <vendor>IKM</vendor>
+                            <runtimeImage>target/kometRuntimeImage</runtimeImage>
+                            <module>dev.ikm.komet.application/dev.ikm.komet.app.App</module>
+                            <javaOptions>
+                                <option>-Xmx8g</option>
+                                <option>--add-opens</option>
+                                <option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
+                                <option>--add-exports</option>
+                                <option>javafx.controls/com.sun.javafx.scene.control.behavior=dev.ikm.komet.navigator</option>
+                            </javaOptions>
+                            <!-- Windows Options - ignored by other Operating Systems -->
+                            <winMenu>true</winMenu>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>Installer</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
             <!-- To disable this, use something like "mvn install -P!codeQuality" -->
             <id>codeQuality</id>
             <activation>
