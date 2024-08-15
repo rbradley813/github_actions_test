@@ -22,7 +22,7 @@ jobs:
           - name: Setup Java
             uses: actions/setup-java@v4
             with:
-              distribution: 'adopt'
+              distribution: 'zulu'
               java-version: '21'
             
           - name: Extract Version
@@ -39,7 +39,7 @@ jobs:
             run: |
               echo "jpackageAppName=Komet-SNAPSHOT-MACOS-${{github.ref_name}}" >> $GITHUB_ENV
               echo "jpackageAppVersion=${{steps.get_current_version.outputs.POM_VERSION}}-BUILD_NUMBER" >> $GITHUB_ENV
-              echo "MAVEN_INSTALLER_ARGS=$MAVEN_INSTALLER_ARGS -D"jpackage.app.name"=${jpackageAppName} -D"jpackage.app.dest"=target/dist/snapshot-installer -D"jpackage.app.version"=${jpackageAppVersion}"
+              echo "MAVEN_INSTALLER_ARGS=$MAVEN_INSTALLER_ARGS -D"jpackage.app.name"=${{env.jpackageAppName}}-D"jpackage.app.dest"=target/dist/snapshot-installer -D"jpackage.app.version"=${{env.jpackageAppVersion}}"
     
           - name: Build Installers
             run: |
@@ -58,4 +58,4 @@ jobs:
             uses: actions/upload-artifact@v4
             with:
              name: my-artifact
-             path: path/to/artifact/world.txt
+             path: application/target/dist/snapshot-installer/*
