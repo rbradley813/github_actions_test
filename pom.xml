@@ -424,9 +424,7 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-           <profile>
+<profile>
             <id>create-installer</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -475,6 +473,7 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
             <!-- To disable this, use something like "mvn install -P!codeQuality" -->
             <id>codeQuality</id>
             <activation>
