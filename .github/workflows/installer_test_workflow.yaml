@@ -39,14 +39,14 @@ jobs:
             run: |
               echo "jpackageAppName=Komet-SNAPSHOT-MACOS-${{github.ref_name}}" >> $GITHUB_ENV
               echo "jpackageAppVersion=${{steps.get_current_version.outputs.POM_VERSION}}-BUILD_NUMBER" >> $GITHUB_ENV
-              echo "MAVEN_INSTALLER_ARGS=$MAVEN_INSTALLER_ARGS -D"jpackage.app.name"=${{env.jpackageAppName}}-D"jpackage.app.dest"=target/dist/snapshot-installer -D"jpackage.app.version"=${{env.jpackageAppVersion}}"
+              echo "MAVEN_INSTALLER_ARGS=$MAVEN_INSTALLER_ARGS -D"jpackage.app.name"=$jpackageAppName -D"jpackage.app.dest"=target/dist/snapshot-installer -D"jpackage.app.version"=$jpackageAppVersion" >> $GITHUB_ENV
     
           - name: Build Installers
             run: |
               ./mvnw --version
                 ./mvnw clean install \
                     -s ${MAVEN_SETTINGS} \
-                    ${mvnInstallerArgs} \
+                    ${{env.MAVEN_INSTALLER_ARGS}} \
                     --batch-mode \
                     -e \
                     -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
