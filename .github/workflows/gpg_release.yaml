@@ -1,4 +1,4 @@
-name: GPG Release Test
+name: Release Workflow
 
 run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
@@ -14,10 +14,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-24.04
-    outputs:
-      NEXT_SNAPSHOT_VERSION: ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}
-      RELEASE_VERSION: ${{steps.splitCurrentVersion.outputs._0}}
-
+    if: github.repository_owner == 'ikmdev'
     steps:
       - name: Verify Branch
         if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
@@ -25,16 +22,12 @@ jobs:
           echo "ERROR: Attempting to release from branch ${{env.BRANCH_NAME}}. Release from ${{env.TRUNK_BRANCH_NAME}} branch only"
           exit 1
 
-      - name: Build IKMDEV Code
+      - name: Release IKMDEV Code
         uses: ikmdev/maven-release-action@main
         with:
-          branch_name: ${{env.BRANCH_NAME}}
           ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           github_token: ${{secrets.GITHUB_TOKEN}}
-          next_snapshot_version: ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}
-          release_version: ${{steps.splitCurrentVersion.outputs._0}}
           ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
           ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
           gpg_key: ${{secrets.GPG_KEY}}
           gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-
