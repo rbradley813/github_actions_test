@@ -5,6 +5,7 @@ run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 on:
     push:
     pull_request:
+    workflow_dispatch:
 
 env:
   MAVEN_SETTING: '/home/ec2-user/maven/.m2/settings.xml'
@@ -13,11 +14,13 @@ env:
 jobs:
   build-job:
     name: Build Job
-    runs-on: self-hosted
-    if: github.repository_owner == 'ikmdev'
+    runs-on: ubuntu-24.04
     steps:
-          - name: Build IKMDEV Code
-            uses: ikmdev/ikmdev-build-action@Testing
-            with:
-              branch_name: ${{env.BRANCH_NAME}}
-        
+      - uses: actions/setup-java@v4
+        with:
+            java-version: '21'
+            distribution: 'zulu'
+      - name: Build IKMDEV Code
+        uses: ikmdev/maven-clean-install-build-action@main
+        with:
+          branch_name: ${{env.BRANCH_NAME}}
