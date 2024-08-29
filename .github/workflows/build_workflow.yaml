@@ -55,6 +55,11 @@ jobs:
                               "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
                             },
                             {
+                              "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            },
+                            {
                               "id": "${{vars.NEXUS_MIRROR_ID}}",
                               "username": "${{ vars.EC2_NEXUS_USERNAME }}",
                               "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
