@@ -21,7 +21,77 @@ jobs:
             distribution: 'zulu'
           
       - name: Build IKMDEV Code
-        uses: ikmdev/maven-clean-install-build-action@Testing
+        uses: ikmdev/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
-          nexus_password: ${{secrets.EC2_NEXUS_PASSWORD}}
+  
+  publish-artifacts:
+      name: Publish Artifacts
+      runs-on: self-hosted
+      needs: build-job
+      if: github.repository_owner == 'ikmdev'
+
+      env:
+        ARTIFACT_REPOSITORY_ID: "maven-snapshots"
+        REPOSITORY_NAME: ${{github.repository}}
+        BRANCH: "main"
+        MAVEN_FILE: '/home/ec2-user/maven/.m2/settings.xml'
+
+      steps:  
+        - name: Checkout Forked Code Repository
+          uses: actions/checkout@v4
+         
+        - name: Maven Settings File
+          uses: whelk-io/maven-settings-xml-action@v22
+          with:
+              servers: > 
+                          [
+                            {
+                              "id": "nexus"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_MIRROR_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            }
+                          ] 
+              profiles: >
+                          [{
+                              "id": "inject-application-properties",
+                              "properties": {
+                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
+                                  "altReleaseDeploymentRepository": "${{vars.NEXUS_RELEASE_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-releases"
+                              }
+                          }]
+              active_profiles: > 
+                          [
+                            "inject-application-properties"
+                          ]
+              mirrors: >
+                          [{
+                              "id": "${{vars.NEXUS_MIRROR_ID}}",
+                              "name": "${{vars.NEXUS_MIRROR_ID}}",
+                              "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
+                              "mirrorOf": "*"
+                          }]
+              output_file: .m2/settings.xml
+
+
+        - name: Deploy To Nexus
+          run: |
+               mvn deploy \
+                  --batch-mode \
+                  -e \
+                  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+                  -DskipTests \
+                  -DskipITs \
+                  -Dmaven.main.skip \
+                  -Dmaven.test.skip \
+                  -s '/home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' \
+                  -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
+                  -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
