@@ -40,6 +40,11 @@ jobs:
       steps:  
         - name: Checkout Forked Code Repository
           uses: actions/checkout@v4
+
+        - uses: actions/setup-java@v4
+          with:
+              java-version: '21'
+              distribution: 'zulu'
          
         - name: Maven Settings File
           uses: whelk-io/maven-settings-xml-action@v22
