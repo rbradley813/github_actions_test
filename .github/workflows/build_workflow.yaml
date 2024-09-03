@@ -36,6 +36,8 @@ jobs:
         REPOSITORY_NAME: ${{github.repository}}
         BRANCH: "main"
         MAVEN_FILE: '/home/ec2-user/maven/.m2/settings.xml'
+        MAVEN_FILE_CHECKUP: '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' 
+        
 
       steps:  
         - name: Checkout Forked Code Repository
@@ -102,6 +104,6 @@ jobs:
                   -DskipITs \
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
-                  -s '/home/ec2-user/actions-runner/_work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' \
+                  -s ${{env.MAVEN_FILE_CHECKUP}}\
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
                   -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
