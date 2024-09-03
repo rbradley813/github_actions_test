@@ -62,7 +62,7 @@ jobs:
             #               [
             #                 "inject-application-properties"
             #               ]
-              output_file: .m2/settings.xml
+            output_file: .m2/settings.xml
 
 
         - name: Deploy To Nexus
