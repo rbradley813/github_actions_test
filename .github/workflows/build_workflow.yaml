@@ -3,8 +3,8 @@ name: Build Workflow
 run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
-    # push:
-    # pull_request:
+    push:
+    pull_request:
     workflow_dispatch:
 
 env:
@@ -24,87 +24,11 @@ jobs:
         uses: ikmdev/maven-clean-install-build-action@main
         with:
           branch_name: ${{env.BRANCH_NAME}}
+      
+      - name: Deploy Artifacts To Nexus
+        if: github.repository_owner == 'ikmdev'
+        uses: ikmdev/maven-nexus-deploy-action@main
+        with:
+          nexus_repo_id: "maven-snapshots"
   
-  publish-artifacts:
-      name: Publish Artifacts
-      runs-on: ubuntu-24.04
-      needs: build-job
-      if: github.repository_owner == 'ikmdev'
-
-      env:
-        ARTIFACT_REPOSITORY_ID: "maven-snapshots"
-        REPOSITORY_NAME: ${{github.repository}}
-        BRANCH: "main"
-        MAVEN_SETTINGS: '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' 
-        
-
-      steps:  
-        - name: Checkout Forked Code Repository
-          uses: actions/checkout@v4
-
-        - uses: actions/setup-java@v4
-          with:
-              java-version: '21'
-              distribution: 'zulu'
-         
-        - name: Maven Settings File
-          uses: whelk-io/maven-settings-xml-action@v22
-          with:
-              servers: > 
-                          [
-                            {
-                              "id": "nexus"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_MIRROR_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            }
-                          ] 
-              profiles: >
-                          [{
-                              "id": "inject-application-properties",
-                              "properties": {
-                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
-                                  "altReleaseDeploymentRepository": "${{vars.NEXUS_RELEASE_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-releases"
-                              }
-                          }]
-              active_profiles: > 
-                          [
-                            "inject-application-properties"
-                          ]
-              mirrors: >
-                          [{
-                              "id": "${{vars.NEXUS_MIRROR_ID}}",
-                              "name": "${{vars.NEXUS_MIRROR_ID}}",
-                              "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
-                              "mirrorOf": "*"
-                          }]
-              output_file: .m2/settings.xml
-
-
-        - name: Deploy To Nexus
-          run: |
-               mvn deploy \
-                  --batch-mode \
-                  -e \
-                  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                  -DskipTests \
-                  -DskipITs \
-                  -Dmaven.main.skip \
-                  -Dmaven.test.skip \
-                  -s ${{env.MAVEN_SETTINGS}} \
-                  -Dmaven.wagon.http.ssl.insecure=true \
-                  -Dmaven.wagon.http.ssl.allowall=true \
-                  -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
-                  -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
+  
