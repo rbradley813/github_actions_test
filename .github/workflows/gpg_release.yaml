@@ -1,33 +1,105 @@
-name: Release Workflow
+name: Nexus Build Workflow
 
-run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
+run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
-# Trigger workflow manually
 on:
-  workflow_dispatch:
+    push:
+    pull_request:
+    workflow_dispatch:
 
 env:
   BRANCH_NAME: ${{github.ref_name}}
-  TRUNK_BRANCH_NAME: 'main'
 
-jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-24.04
-    if: github.repository_owner == 'ikmdev'
-    steps:
-      - name: Verify Branch
-        if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
-        run: |
-          echo "ERROR: Attempting to release from branch ${{env.BRANCH_NAME}}. Release from ${{env.TRUNK_BRANCH_NAME}} branch only"
-          exit 1
+jobs: 
+  publish-artifacts:
+      name: Publish Artifacts
+      runs-on: ubuntu-24.04
+      if: github.repository_owner == 'ikmdev'
 
-      - name: Release IKMDEV Code
-        uses: ikmdev/maven-release-action@main
-        with:
-          ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
-          ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
-          gpg_key: ${{secrets.GPG_KEY}}
-          gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
+      env:
+        ARTIFACT_REPOSITORY_ID: "maven-snapshots"
+        REPOSITORY_NAME: ${{github.repository}}
+        BRANCH: "main"
+        MAVEN_SETTINGS: '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' 
+        
+
+      steps:  
+        - name: Checkout Forked Code Repository
+          uses: actions/checkout@v4
+
+        - name: Setup Java
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'zulu'
+            java-version: '21'
+            server-id: ossrh
+            server-username: NEXUS_USERNAME
+            server-password: NEXUS_USERNAME
+            gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      
+         
+        # - name: Maven Settings File
+        #   uses: whelk-io/maven-settings-xml-action@v22
+        #   with:
+        #       servers: > 
+        #                   [
+        #                     {
+        #                       "id": "nexus"
+        #                     },
+        #                     {
+        #                       "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
+        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+        #                     },
+        #                     {
+        #                       "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
+        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+        #                     },
+        #                     {
+        #                       "id": "${{vars.NEXUS_MIRROR_ID}}",
+        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+        #                     }
+        #                   ] 
+        #       profiles: >
+        #                   [{
+        #                       "id": "inject-application-properties",
+        #                       "properties": {
+        #                           "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
+        #                           "altReleaseDeploymentRepository": "${{vars.NEXUS_RELEASE_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-releases"
+        #                       }
+        #                   }]
+        #       active_profiles: > 
+        #                   [
+        #                     "inject-application-properties"
+        #                   ]
+        #       mirrors: >
+        #                   [{
+        #                       "id": "${{vars.NEXUS_MIRROR_ID}}",
+        #                       "name": "${{vars.NEXUS_MIRROR_ID}}",
+        #                       "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
+        #                       "mirrorOf": "*"
+        #                   }]
+        #       output_file: .m2/settings.xml
+
+
+        - name: Deploy To Nexus
+          run: |
+               mvn deploy \
+                  --batch-mode \
+                  -e \
+                  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+                  -DskipTests \
+                  -DskipITs \
+                  -Dmaven.main.skip \
+                  -Dmaven.test.skip \
+                  -Dmaven.wagon.http.ssl.insecure=true \
+                  -Dmaven.wagon.http.ssl.allowall=true \
+                  -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
+          env:
+            NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
+            NEXUS_PASSWORD: ${{ secrets.EC2_NEXUS_PASSWORD}}
+            MAVEN_GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+
+     

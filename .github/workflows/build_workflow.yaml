@@ -3,8 +3,8 @@ name: Build Workflow
 run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
-    push:
-    pull_request:
+    # push:
+    # pull_request:
     workflow_dispatch:
 
 env:
@@ -35,8 +35,7 @@ jobs:
         ARTIFACT_REPOSITORY_ID: "maven-snapshots"
         REPOSITORY_NAME: ${{github.repository}}
         BRANCH: "main"
-        MAVEN_FILE: '/home/ec2-user/maven/.m2/settings.xml'
-        MAVEN_FILE_CHECKUP: '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' 
+        MAVEN_SETTINGS: '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml' 
         
 
       steps:  
@@ -104,7 +103,7 @@ jobs:
                   -DskipITs \
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
-                  -s ${{env.MAVEN_FILE_CHECKUP}} \
+                  -s ${{env.MAVEN_SETTINGS}} \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
