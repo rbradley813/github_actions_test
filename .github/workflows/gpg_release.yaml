@@ -96,7 +96,7 @@ jobs:
                   -Dmaven.test.skip \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
-                  -DaltDeploymentRepository=http://${{vars.EC2_NEXUS_USERNAME}}:${{secrets.EC2_NEXUS_PASSWORD}}@nexus.tinkarbuild.com/repository/maven-snapshots
+                  -DUrl=http://${{vars.EC2_NEXUS_USERNAME}}:${{secrets.EC2_NEXUS_PASSWORD}}@nexus.tinkarbuild.com/repository/maven-snapshots
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
           env: 
             NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
