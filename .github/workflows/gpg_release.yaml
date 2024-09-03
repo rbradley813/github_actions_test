@@ -32,10 +32,6 @@ jobs:
           with:
             distribution: 'zulu'
             java-version: '21'
-            server-id: nexus
-            server-username: NEXUS_USERNAME
-            server-password: NEXUS_USERNAME
-            gpg-passphrase: MAVEN_GPG_PASSPHRASE
       
          
         - name: Maven Settings File
@@ -50,30 +46,19 @@ jobs:
                               "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
                               "username": "${{ vars.EC2_NEXUS_USERNAME }}",
                               "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_MIRROR_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
                             }
                           ] 
-        #       profiles: >
-        #                   [{
-        #                       "id": "inject-application-properties",
-        #                       "properties": {
-        #                           "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
-        #                           "altReleaseDeploymentRepository": "${{vars.NEXUS_RELEASE_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-releases"
-        #                       }
-        #                   }]
-        #       active_profiles: > 
-        #                   [
-        #                     "inject-application-properties"
-        #                   ]
+              profiles: >
+                          [{
+                              "id": "inject-application-properties",
+                              "properties": {
+                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
+                              }
+                          }]
+              active_profiles: > 
+                          [
+                            "inject-application-properties"
+                          ]
         #       mirrors: >
         #                   [{
         #                       "id": "${{vars.NEXUS_MIRROR_ID}}",
@@ -97,10 +82,6 @@ jobs:
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
                   -s ${{env.MAVEN_SETTINGS}}
-                  -DaltDeploymentRepository=${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots
-          env: 
-            NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
-            NEXUS_PASSWORD: ${{ secrets.EC2_NEXUS_PASSWORD}}
-            MAVEN_GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+                  -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
 
      
