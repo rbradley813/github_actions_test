@@ -37,35 +37,31 @@ jobs:
         - name: Maven Settings File
           uses: whelk-io/maven-settings-xml-action@v22
           with:
-              servers: > 
-                          [
-                            {
-                              "id": "nexus"
-                            },
-                            {
-                              "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
-                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-                            }
-                          ] 
-              profiles: >
-                          [{
-                              "id": "inject-application-properties",
-                              "properties": {
-                                  "altDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"
-                              }
-                          }]
-              active_profiles: > 
-                          [
-                            "inject-application-properties"
-                          ]
-        #       mirrors: >
-        #                   [{
-        #                       "id": "${{vars.NEXUS_MIRROR_ID}}",
-        #                       "name": "${{vars.NEXUS_MIRROR_ID}}",
-        #                       "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
-        #                       "mirrorOf": "*"
-        #                   }]
+            servers: '[{"id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}", "username": "${{vars.EC2_NEXUS_USERNAME}}", "password": ${{secrets.EC2_NEXUS_PASSWORD}}}]'
+            profiles: '[{"id": "inject-application-properties". "properties": {"altDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"}}]'
+            active_profiles: '["inject-application-properties"]' 
+            # servers: > 
+            #               [
+            #                 {
+            #                   "id": "nexus"
+            #                 },
+            #                 {
+            #                   "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
+            #                   "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+            #                   "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+            #                 }
+            #               ] 
+            #   profiles: >
+            #               [{
+            #                   "id": "inject-application-properties",
+            #                   "properties": {
+            #                       "altDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"
+            #                   }
+            #               }]
+            #   active_profiles: > 
+            #               [
+            #                 "inject-application-properties"
+            #               ]
               output_file: .m2/settings.xml
 
 
