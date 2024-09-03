@@ -52,7 +52,7 @@ jobs:
                           [{
                               "id": "inject-application-properties",
                               "properties": {
-                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"
+                                  "altDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"
                               }
                           }]
               active_profiles: > 
@@ -81,7 +81,7 @@ jobs:
                   -Dmaven.test.skip \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
-                  -s ${{env.MAVEN_SETTINGS}}
+                  -s ${{env.MAVEN_SETTINGS}} \
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
 
      
