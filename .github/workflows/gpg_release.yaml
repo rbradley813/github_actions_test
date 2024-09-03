@@ -32,7 +32,7 @@ jobs:
           with:
             distribution: 'zulu'
             java-version: '21'
-            server-id: ossrh
+            server-id: nexus
             server-username: NEXUS_USERNAME
             server-password: NEXUS_USERNAME
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
@@ -96,9 +96,10 @@ jobs:
                   -Dmaven.test.skip \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
-                  -DaltDeploymentRepository=${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots
+                  -DaltDeploymentRepository=nexus::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
           env:
+            
             NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
             NEXUS_PASSWORD: ${{ secrets.EC2_NEXUS_PASSWORD}}
             MAVEN_GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
