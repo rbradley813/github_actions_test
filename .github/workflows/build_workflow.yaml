@@ -105,6 +105,7 @@ jobs:
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
                   -s ${{env.MAVEN_FILE_CHECKUP}} \
+                  -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
                   -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' \
                   -Dgpg.passphrase=${{secrets.GPG_PASSPHRASE}}
