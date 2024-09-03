@@ -52,7 +52,7 @@ jobs:
                           [{
                               "id": "inject-application-properties",
                               "properties": {
-                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots",
+                                  "altSnapshotDeploymentRepository": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots"
                               }
                           }]
               active_profiles: > 
