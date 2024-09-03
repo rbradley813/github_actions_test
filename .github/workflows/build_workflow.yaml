@@ -30,5 +30,6 @@ jobs:
         uses: ikmdev/maven-nexus-deploy-action@main
         with:
           nexus_repo_id: "maven-snapshots"
+          nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
   
   
