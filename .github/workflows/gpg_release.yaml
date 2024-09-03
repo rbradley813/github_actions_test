@@ -38,30 +38,30 @@ jobs:
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
       
          
-        # - name: Maven Settings File
-        #   uses: whelk-io/maven-settings-xml-action@v22
-        #   with:
-        #       servers: > 
-        #                   [
-        #                     {
-        #                       "id": "nexus"
-        #                     },
-        #                     {
-        #                       "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
-        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-        #                     },
-        #                     {
-        #                       "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
-        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-        #                     },
-        #                     {
-        #                       "id": "${{vars.NEXUS_MIRROR_ID}}",
-        #                       "username": "${{ vars.EC2_NEXUS_USERNAME }}",
-        #                       "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
-        #                     }
-        #                   ] 
+        - name: Maven Settings File
+          uses: whelk-io/maven-settings-xml-action@v22
+          with:
+              servers: > 
+                          [
+                            {
+                              "id": "nexus"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_SNAPSHOT_REPO_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_RELEASE_REPO_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            },
+                            {
+                              "id": "${{vars.NEXUS_MIRROR_ID}}",
+                              "username": "${{ vars.EC2_NEXUS_USERNAME }}",
+                              "password": "${{ secrets.EC2_NEXUS_PASSWORD}}"
+                            }
+                          ] 
         #       profiles: >
         #                   [{
         #                       "id": "inject-application-properties",
@@ -81,7 +81,7 @@ jobs:
         #                       "url": "${{ vars.EC2_NEXUS_URL }}/repository/maven-public",
         #                       "mirrorOf": "*"
         #                   }]
-        #       output_file: .m2/settings.xml
+              output_file: .m2/settings.xml
 
 
         - name: Deploy To Nexus
@@ -96,8 +96,7 @@ jobs:
                   -Dmaven.test.skip \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
-                  -DUrl=http://${{vars.EC2_NEXUS_USERNAME}}:${{secrets.EC2_NEXUS_PASSWORD}}@nexus.tinkarbuild.com/repository/maven-snapshots
-                  -DrepositoryId='${{env.ARTIFACT_REPOSITORY_ID}}' 
+                  -DaltDeploymentRepository=${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots
           env: 
             NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
             NEXUS_PASSWORD: ${{ secrets.EC2_NEXUS_PASSWORD}}
