@@ -27,7 +27,7 @@ jobs:
   
   publish-artifacts:
       name: Publish Artifacts
-      runs-on: self-hosted
+      runs-on: ubuntu-24.04
       needs: build-job
       if: github.repository_owner == 'ikmdev'
 
