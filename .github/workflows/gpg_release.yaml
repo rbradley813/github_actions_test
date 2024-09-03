@@ -96,6 +96,7 @@ jobs:
                   -Dmaven.test.skip \
                   -Dmaven.wagon.http.ssl.insecure=true \
                   -Dmaven.wagon.http.ssl.allowall=true \
+                  -s ${{env.MAVEN_SETTINGS}}
                   -DaltDeploymentRepository=${{vars.NEXUS_SNAPSHOT_REPO_ID}}::${{ vars.EC2_NEXUS_URL }}/repository/maven-snapshots
           env: 
             NEXUS_USERNAME: ${{ vars.EC2_NEXUS_USERNAME }}
