@@ -14,6 +14,6 @@ Automation Team
 
 For a quick guide on how to make changes to this project, including new features or bug fixes, please click [here](doc/how-to-contribute.md).
 
-## Testing
+## Test
 
 
