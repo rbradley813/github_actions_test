@@ -4,8 +4,7 @@ run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
     push:
-    # pull_request:
-    pull_request_target:
+    pull_request:
     workflow_dispatch:
 
 env:
