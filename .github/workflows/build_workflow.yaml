@@ -35,6 +35,9 @@ jobs:
         if: env.IS_TAG == 'true' && github.repository_owner == 'ikmdev'
         run: |
           echo "NEXUS_RELEASE_ID=maven-releases" >> $GITHUB_OUTPUT
+
+      - name: Print Action
+        run: echo ${{github.event.action}}
       
       - name: Deploy Artifacts To Nexus
         if: github.repository_owner == 'ikmdev' && github.event.action != 'pull_request'
