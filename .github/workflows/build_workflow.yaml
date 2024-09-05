@@ -26,6 +26,9 @@ jobs:
         with:
           branch_name: ${{env.BRANCH_NAME}}
 
+      - name: Print Branch
+        run: echo ${{env.BRANCH_NAME}}
+
       - name: Pick Nexus Repo ID
         id: nexusRepoID
         if: env.IS_TAG == 'true' && github.repository_owner == 'ikmdev'
