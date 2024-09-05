@@ -27,23 +27,34 @@ jobs:
         with:
           branch_name: ${{env.BRANCH_NAME}}
 
-      - name: Print Branch
-        run: echo ${{env.BRANCH_NAME}}
+  call_nexus_workflow_with_custom_inputs:
+    name: Call Reusable Workflow With Inputs
+    needs: build-job
+    if: github.repository_owner == 'ikmdev'
+    uses: ikmdev/maven-nexus-deploy-action/.github/workflows/nexus_deploy.yaml@main
+    secrets: inherit
+    with:
+      repo_owner: ${{github.repository_owner}}
+      branch_name: ${{github.ref_name}}
+      is_tag: ${{github.ref_type == 'tag'}}
 
-      - name: Pick Nexus Repo ID
-        id: nexusRepoID
-        if: env.IS_TAG == 'true' && github.repository_owner == 'ikmdev'
-        run: |
-          echo "NEXUS_RELEASE_ID=maven-releases" >> $GITHUB_OUTPUT
+      # - name: Print Branch
+      #   run: echo ${{env.BRANCH_NAME}}
 
-      - name: Print Action
-        run: echo ${{github.event_name}}
+      # - name: Pick Nexus Repo ID
+      #   id: nexusRepoID
+      #   if: env.IS_TAG == 'true' && github.repository_owner == 'ikmdev'
+      #   run: |
+      #     echo "NEXUS_RELEASE_ID=maven-releases" >> $GITHUB_OUTPUT
+
+      # - name: Print Action
+      #   run: echo ${{github.event_name}}
       
-      - name: Deploy Artifacts To Nexus
-        if: github.repository_owner == 'ikmdev' && github.event_name != 'pull_request'
-        uses: ikmdev/maven-nexus-deploy-action@main
-        with:
-          nexus_repo_id: ${{ steps.nexusRepoID.outputs.NEXUS_RELEASE_ID || 'maven-snapshots'}}
-          nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
+      # - name: Deploy Artifacts To Nexus
+      #   if: github.repository_owner == 'ikmdev' && github.event_name != 'pull_request'
+      #   uses: ikmdev/maven-nexus-deploy-action@main
+      #   with:
+      #     nexus_repo_id: ${{ steps.nexusRepoID.outputs.NEXUS_RELEASE_ID || 'maven-snapshots'}}
+      #     nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
   
   
