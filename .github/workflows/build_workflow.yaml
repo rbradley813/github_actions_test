@@ -37,10 +37,10 @@ jobs:
           echo "NEXUS_RELEASE_ID=maven-releases" >> $GITHUB_OUTPUT
 
       - name: Print Action
-        run: echo ${{github.event.action}}
+        run: echo ${{github.event_name}}
       
       - name: Deploy Artifacts To Nexus
-        if: github.repository_owner == 'ikmdev' && github.event.action != 'pull_request'
+        if: github.repository_owner == 'ikmdev' && github.event_name != 'pull_request'
         uses: ikmdev/maven-nexus-deploy-action@main
         with:
           nexus_repo_id: ${{ steps.nexusRepoID.outputs.NEXUS_RELEASE_ID || 'maven-snapshots'}}
