@@ -26,6 +26,13 @@ jobs:
             repository: ${{github.event.workflow_run.head_repository.full_name}}
             ref: ${{github.event.workflow_run.head_branch}}
 
+      - uses: actions/setup-java@v4
+        with:
+                java-version: '21'
+                distribution: 'zulu'
+
+      - run: mvn clean install
+
       - name: Print Stuff
         run: |
           echo ${{toJson(github.event.workflow_run)}}  
