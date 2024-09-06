@@ -8,9 +8,6 @@ on:
       - Build Workflow
     types:
       - completed
-
-env:
-    BRANCH_NAME: ${{github.event.workflow_run.actor.login}}/
         
         
 jobs:
@@ -19,40 +16,19 @@ jobs:
       runs-on: ubuntu-24.04
       if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
       steps:
-
-    #   - name: Print GitHub
-    #     run: echo ${{toJson(github)}}
-
-      - name: Get Current Stuff
-        uses: actions/checkout@v4
-        with:
-            repository: ${{github.event.workflow_run.head_repository.full_name}}
-            ref: ${{github.event.workflow_run.head_branch}}
-
       - uses: actions/setup-java@v4
         with:
                 java-version: '21'
                 distribution: 'zulu'
 
-      - run: mvn clean install
-
-      - name: Print Stuff
-        run: |
-          echo ${{toJson(github.event.workflow_run)}}  
-          exit 1   
-
-      - name: Pick Nexus Repo ID
-        id: nexusRepoID
-        if: inputs.is_tag == 'true'
-        run: |
-            echo "NEXUS_RELEASE_ID=maven-releases" >> $GITHUB_OUTPUT
 
       - name: Deploy Artifacts To Nexus
-        if: inputs.repo_owner == 'ikmdev'
         uses: ikmdev/maven-nexus-deploy-action@main
         with:
-            nexus_repo_id: ${{ steps.nexusRepoID.outputs.NEXUS_RELEASE_ID || 'maven-snapshots'}}
             nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
+            repo_name: ${{github.event.workflow_run.head_repository.full_name}}
+            branch_name: ${{github.event.workflow_run.head_branch}}
+            is_tag: ${{github.ref_type == 'tag'}}
 
 
   
