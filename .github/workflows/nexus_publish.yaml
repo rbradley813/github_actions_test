@@ -20,13 +20,13 @@ jobs:
       if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
       steps:
 
-      - name: Print GitHub
-        run: echo ${{toJson(github)}}
+    #   - name: Print GitHub
+    #     run: echo ${{toJson(github)}}
 
       - name: Get Current Stuff
         uses: actions/checkout@v4
         with:
-            repository: ${{github.event.workflow_run.head_repository.full_name}}
+            # repository: ${{github.event.workflow_run.head_repository.full_name}}
             ref: ${{github.event.workflow_run.head_branch}}
 
       - uses: actions/setup-java@v4
