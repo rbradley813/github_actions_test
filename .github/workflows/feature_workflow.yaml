@@ -1,0 +1,59 @@
+name: Feature Branch Release
+
+run-name: 'Build Feature Branch Workflow -- ${{ github.head_ref || github.ref_name }}'
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: Action
+        options:
+          - Start
+          - Resume
+          - Finish
+        required: true
+
+jobs:
+  Build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Ensure feature/ prefix
+        run: |
+          # Get the current branch name
+          BRANCH_NAME=${GITHUB_REF##*/}
+          # Check if the branch name already starts with 'feature/'
+          if [[ $BRANCH_NAME != feature/* ]]; then
+            NEW_BRANCH_NAME="feature/$BRANCH_NAME"
+            echo "Renaming branch to $NEW_BRANCH_NAME"
+            # Create a new branch with the prefix
+            git branch -m "$NEW_BRANCH_NAME"
+            # Push the renamed branch
+            git push origin -U "$NEW_BRANCH_NAME"
+          else
+            echo "Branch already starts with 'feature/'"
+          fi
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Maven Build -- Feature Branch
+        shell: bash
+        run: |
+          ./mvnw clean install -U \
+            --batch-mode \
+            -e \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -Denforcer.skip=true \
+            -PcodeQuality
