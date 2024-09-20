@@ -3,12 +3,16 @@ name: Feature Branch Release
 run-name: 'Build Feature Branch Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
-  push:
-    branches:
-      - feature/*     # Triggers for any  feature branch
-  pull_request:
-    branches:
-      - main          # Triggers on PRs targeting main
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: Action
+        options:
+          - Start
+          - Resume
+          - Finish
+        required: true
 
 jobs:
   Build:
