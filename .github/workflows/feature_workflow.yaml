@@ -6,9 +6,9 @@ on:
   push:
     branches:
       - feature/*     # Triggers for any  feature branch
-#  pull_request:
-#    branches:
-#      - main          # Triggers on PRs targeting main
+  pull_request:
+    branches:
+      - main          # Triggers on PRs targeting main
 
 jobs:
   release:
