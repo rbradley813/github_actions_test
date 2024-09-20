@@ -1,59 +1,131 @@
-name: Feature Branch Release
+name: Feature Branch Lifecycle Workflow
 
 run-name: 'Build Feature Branch Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 on:
   workflow_dispatch:
     inputs:
-      action:
+      feature_action:
+        description: 'Select which feature action to run'
+        required: true
+        default: 'start'
         type: choice
-        description: Action
         options:
-          - Start
-          - Resume
-          - Finish
+          - start
+          - resume
+          - finish
+      branch_name:
+        description: 'Enter the name of the branch to operate on (without feature/ prefix)'
         required: true
 
 jobs:
-  Build:
+  start-feature:
+    if: ${{ github.event.inputs.feature_action == 'start' }}
     runs-on: ubuntu-24.04
+    name: Start Feature Job
+
     steps:
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
+      # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Check and add feature/ prefix to branch name if missing
       - name: Ensure feature/ prefix
         run: |
-          # Get the current branch name
-          BRANCH_NAME=${GITHUB_REF##*/}
-          # Check if the branch name already starts with 'feature/'
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
           if [[ $BRANCH_NAME != feature/* ]]; then
             NEW_BRANCH_NAME="feature/$BRANCH_NAME"
             echo "Renaming branch to $NEW_BRANCH_NAME"
-            # Create a new branch with the prefix
             git branch -m "$NEW_BRANCH_NAME"
-            # Push the renamed branch
-            git push origin -U "$NEW_BRANCH_NAME"
+            git push origin -u "$NEW_BRANCH_NAME"
           else
-            echo "Branch already starts with 'feature/'"
+            echo "Branch name already starts with feature/"
           fi
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-
-      - name: Maven Build -- Feature Branch
-        shell: bash
+      - name: Check for existing PR
         run: |
-          ./mvnw clean install -U \
-            --batch-mode \
-            -e \
-            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-            -Denforcer.skip=true \
-            -PcodeQuality
+          pr_exists=$(gh pr list --head ${{ github.event.inputs.branch_name }} --json number --jq '.[].number')
+          if [ -n "$pr_exists" ]; then
+            echo "Error: Pull Request already exists for branch ${{ github.event.inputs.branch_name }}."
+            exit 1
+          fi
+
+      - name: Update Maven coordinates
+        run: |
+          VERSION="1.0.0-${{ github.event.inputs.branch_name }}-SNAPSHOT"
+          mvn versions:set -DnewVersion=$VERSION
+          mvn versions:commit
+          git add pom.xml
+          git commit -m "chore: update Maven coordinates to $VERSION"
+          git push origin HEAD
+
+      - name: Create Draft PR
+        run: |
+          gh pr create --head ${{ github.event.inputs.branch_name }} --base main --title "Draft PR for ${{ github.event.inputs.branch_name }}" --body "This is a draft PR for ${{ github.event.inputs.branch_name }}" --draft
+
+  resume-feature:
+    if: ${{ github.event.inputs.feature_action == 'resume' }}
+    runs-on: ubuntu-24.04
+    name: Resume Feature Job
+
+    steps:
+      - name: Find and Check PR State
+        run: |
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
+          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
+          if [ -z "$pr_number" ]; then
+          echo "Error: No PR found for branch $BRANCH_NAME."
+          exit 1
+          fi
+          pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
+          if [ "$pr_state" != "CLOSED" ]; then
+          echo "Error: PR #$pr_number is not in finished state (closed)."
+          exit 1
+          fi
+
+      - name: Reopen and Set PR to Draft
+        run: |
+          gh pr reopen "$pr_number"
+          gh pr edit "$pr_number" --draft
+
+      - name: Update Maven coordinates to unique version
+        run: |
+          VERSION="1.0.0-${{ github.event.inputs.branch_name }}-SNAPSHOT"
+          mvn versions:set -DnewVersion=$VERSION
+          mvn versions:commit
+          git add pom.xml
+          git commit -m "chore: revert Maven coordinates to $VERSION"
+          git push origin HEAD
+  
+  finish-feature:
+    if: ${{ github.event.inputs.feature_action == 'finish' }}
+    runs-on: ubuntu-24.04
+    name: Finish Feature Job
+
+    steps:
+      - name: Find and Check PR State
+        run: |
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
+          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
+          if [ -z "$pr_number" ]; then
+          echo "Error: No PR found for branch $BRANCH_NAME."
+          exit 1
+          fi
+          pr_draft=$(gh pr view "$pr_number" --json isDraft --jq '.isDraft')
+          if [ "$pr_draft" != "true" ]; then
+          echo "Error: PR #$pr_number is not in draft state."
+          exit 1
+          fi
+
+      - name: Set PR to Finish
+        run: |
+          gh pr ready "$pr_number"
+
+      - name: Update Maven coordinates to default version
+        run: |
+          VERSION="1.0.0"
+          mvn versions:set -DnewVersion=$VERSION
+          mvn versions:commit
+          git add pom.xml
+          git commit -m "chore: set Maven coordinates to $VERSION"
+          git push origin HEAD
