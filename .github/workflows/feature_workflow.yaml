@@ -14,14 +14,12 @@ jobs:
   Build:
     runs-on: ubuntu-24.04
     steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/ckeckout@v4
-        with:
-          distribution: 'adopt'
-          java-version: '21'
 
       - name: Ensure feature/ prefix
         run: |
