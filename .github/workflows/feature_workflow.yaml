@@ -18,6 +18,9 @@ on:
         description: 'Enter the name of the branch to operate on (without feature/ prefix)'
         required: true
 
+env:
+    GH_TOKEN: ${{ github.token }}
+    
 jobs:
   start-feature:
     if: ${{ github.event.inputs.feature_action == 'start' }}
