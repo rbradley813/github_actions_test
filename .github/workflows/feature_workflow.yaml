@@ -33,6 +33,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Set Git user email and name
+      - name: Set up Git config
+        run: |
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
       # Check and add feature/ prefix to branch name if missing
       - name: Ensure feature/ prefix
         run: |
@@ -60,6 +66,8 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
+          git config user.name "ikmdevops"
+          git config user.email ${{inputs.ikmdevops_email}}
           git commit -m "chore: update Maven coordinates to $VERSION"
           git push origin HEAD
 
@@ -73,6 +81,12 @@ jobs:
     name: Resume Feature Job
 
     steps:
+      # Set Git user email and name
+      - name: Set up Git config
+        run: |
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
       - name: Find and Check PR State
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch_name }}"
@@ -107,6 +121,12 @@ jobs:
     name: Finish Feature Job
 
     steps:
+      # Set Git user email and name
+      - name: Set up Git config
+        run: |
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
       - name: Find and Check PR State
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch_name }}"
