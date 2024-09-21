@@ -148,7 +148,7 @@ jobs:
 
       - name: Find and Check PR State
         run: |
-          BRANCH_NAME="$NEW_BRANCH_NAME"
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
           pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
           if [ -z "$pr_number" ]; then
           echo "Error: No PR found for branch $BRANCH_NAME."
