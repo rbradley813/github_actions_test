@@ -12,15 +12,19 @@ on:
         type: choice
         options:
           - start
-          - resume
           - finish
+          - resume
       branch_name:
         description: 'Enter the name of the branch to operate on (without feature/ prefix)'
         required: true
 
 env:
-    GH_TOKEN: ${{ github.token }}
-    IKMDEVOPS_PAT: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+    GH_TOKEN: "${{ github.token }}"
+    IKMDEVOPS_PAT: "${{secrets.IKMDEVOPS_PAT_TOKEN}}"
+    TRUNK_BRANCH: "main"
+    BRANCH_NAME: "${{ github.event.inputs.branch_name }}"
+    FEATURE_BRANCH: "feature/$BRANCH_NAME"
+    PR_NUMBER: "${{ github.event.number }}"
     
 jobs:
   start-feature:
@@ -44,10 +48,10 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch_name }}"
           if [[ $BRANCH_NAME != feature/* ]]; then
-            NEW_BRANCH_NAME="feature/$BRANCH_NAME"
-            echo "Renaming branch to $NEW_BRANCH_NAME"
-            git branch -m "$NEW_BRANCH_NAME"
-            git push origin -u "$NEW_BRANCH_NAME"
+            FEATURE_BRANCH="feature/$BRANCH_NAME"
+            echo "Renaming branch to $FEATURE_BRANCH"
+            git branch -m "$FEATURE_BRANCH"
+            git push origin -u "$FEATURE_BRANCH"
           else
             echo "Branch name already starts with feature/"
           fi
@@ -66,58 +70,14 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
-          git config user.name "ikmdevops"
-          git config user.email ${{inputs.ikmdevops_email}}
           git commit -m "chore: update Maven coordinates to $VERSION"
-          git push origin HEAD
+          git pull origin HEAD
+          git push -u origin HEAD
 
       - name: Create Draft PR
         run: |
-          gh pr create --head "$NEW_BRANCH_NAME" --base main --title "Draft PR for $NEW_BRANCH_NAME" --body "This is a draft PR for $NEW_BRANCH_NAME" --draft
+          gh pr create --head "$FEATURE_BRANCH" --base main --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
 
-  resume-feature:
-    if: ${{ github.event.inputs.feature_action == 'resume' }}
-    runs-on: ubuntu-24.04
-    name: Resume Feature Job
-
-    steps:
-      - name: Set up Git config
-        run: |
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-
-      - name: Find and Check PR State
-        run: |
-          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-          if [[ $BRANCH_NAME != feature/* ]]; then
-            NEW_BRANCH_NAME="feature/$BRANCH_NAME"
-            echo "Renaming branch to $NEW_BRANCH_NAME"
-            pr_number=$(gh pr list --head "$NEW_BRANCH_NAME" --json number --jq '.[].number')
-          if [ -z "$pr_number" ]; then
-            echo "Error: No PR found for branch $BRANCH_NAME."
-            exit 1
-          fi
-          pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
-          if [ "$pr_state" != "CLOSED" ]; then
-            echo "Error: PR #$pr_number is not in finished state (closed)."
-            exit 1
-          fi
-
-      - name: Reopen and Set PR to Draft
-        run: |
-          gh pr reopen "$pr_number"
-          gh pr edit "$pr_number" --draft
-
-      - name: Update Maven coordinates to unique version
-        run: |
-          VERSION="1.0.0-${{ github.event.inputs.new_branch_name }}-SNAPSHOT"
-          mvn versions:set -DnewVersion=$VERSION
-          mvn versions:commit
-          git add pom.xml
-          git config user.name "ikmdevops"
-          git config user.email ${{inputs.ikmdevops_email}}
-          git commit -m "chore: revert Maven coordinates to $VERSION"
-          git push origin HEAD
   
   finish-feature:
     if: ${{ github.event.inputs.feature_action == 'finish' }}
@@ -133,7 +93,7 @@ jobs:
 
       - name: Find and Check PR State
         run: |
-          BRANCH_NAME="$NEW_BRANCH_NAME"
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
           pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
           if [ -z "$pr_number" ]; then
           echo "Error: No PR found for branch $BRANCH_NAME."
@@ -155,7 +115,47 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
-          git config user.name "ikmdevops"
-          git config user.email ${{inputs.ikmdevops_email}}
           git commit -m "chore: set Maven coordinates to $VERSION"
-          git push origin HEAD
+          git pull origin HEAD
+          git push -u origin HEAD
+
+
+  resume-feature:
+    if: ${{ github.event.inputs.feature_action == 'resume' }}
+    runs-on: ubuntu-24.04
+    name: Resume Feature Job
+
+    steps:
+      - name: Set up Git config
+        run: |
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
+      - name: Find and Check PR State
+        run: |
+          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
+          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
+          if [ -z "$pr_number" ]; then
+            echo "Error: No PR found for branch $BRANCH_NAME."
+            exit 1
+          fi
+          pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
+          if [ "$pr_state" != "CLOSED" ]; then
+            echo "Error: PR #$pr_number is not in finished state (closed)."
+            exit 1
+          fi
+
+      - name: Reopen and Set PR to Draft
+        run: |
+          gh pr reopen "$pr_number"
+          gh pr edit "$pr_number" --draft
+
+      - name: Update Maven coordinates to unique version
+        run: |
+          VERSION="1.0.0-${{ github.event.inputs.feature_branch }}-SNAPSHOT"
+          mvn versions:set -DnewVersion=$VERSION
+          mvn versions:commit
+          git add pom.xml
+          git commit -m "chore: revert Maven coordinates to $VERSION"
+          git pull origin HEAD
+          git push -u origin HEAD
