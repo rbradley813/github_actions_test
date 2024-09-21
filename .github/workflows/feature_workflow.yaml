@@ -92,7 +92,7 @@ jobs:
           if [[ $BRANCH_NAME != feature/* ]]; then
             NEW_BRANCH_NAME="feature/$BRANCH_NAME"
             echo "Renaming branch to $NEW_BRANCH_NAME"
-            pr_number=$(gh pr list --head "$NEW_BRANCH_NAME" --json number --jq '.[].number')
+          pr_number=$(gh pr list --head "$NEW_BRANCH_NAME" --json number --jq '.[].number')
           if [ -z "$pr_number" ]; then
             echo "Error: No PR found for branch $BRANCH_NAME."
             exit 1
