@@ -89,13 +89,9 @@ jobs:
       - name: Find and Check PR State
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-          if [[ $BRANCH_NAME != feature/* ]]; then
-            NEW_BRANCH_NAME="feature/$BRANCH_NAME"
-            echo "Renaming branch to $NEW_BRANCH_NAME"
-          fi
-          pr_number=$(gh pr list --head "$NEW_BRANCH_NAME" --json number --jq '.[].number')
+          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
           if [ -z "$pr_number" ]; then
-            echo "Error: No PR found for branch $NEW_BRANCH_NAME."
+            echo "Error: No PR found for branch $BRANCH_NAME."
             exit 1
           fi
           pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
@@ -111,7 +107,7 @@ jobs:
 
       - name: Update Maven coordinates to unique version
         run: |
-          VERSION="1.0.0-${{ github.event.inputs.new_branch_name }}-SNAPSHOT"
+          VERSION="1.0.0-${{ github.event.inputs.branch_name }}-SNAPSHOT"
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
