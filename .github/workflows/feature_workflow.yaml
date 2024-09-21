@@ -73,7 +73,7 @@ jobs:
 
       - name: Create Draft PR
         run: |
-          gh pr create --head ${{ github.event.inputs.branch_name }} --base main --title "Draft PR for ${{ github.event.inputs.branch_name }}" --body "This is a draft PR for ${{ github.event.inputs.branch_name }}" --draft
+          gh pr create --head "$NEW_BRANCH_NAME" --base main --title "Draft PR for $NEW_BRANCH_NAME" --body "This is a draft PR for $NEW_BRANCH_NAME" --draft
 
   resume-feature:
     if: ${{ github.event.inputs.feature_action == 'resume' }}
