@@ -112,6 +112,8 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
+          git config user.name "ikmdevops"
+          git config user.email ${{inputs.ikmdevops_email}}
           git commit -m "chore: revert Maven coordinates to $VERSION"
           git push origin HEAD
   
@@ -151,5 +153,7 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
           git add pom.xml
+          git config user.name "ikmdevops"
+          git config user.email ${{inputs.ikmdevops_email}}
           git commit -m "chore: set Maven coordinates to $VERSION"
           git push origin HEAD
