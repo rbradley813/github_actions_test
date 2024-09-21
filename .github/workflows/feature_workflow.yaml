@@ -96,12 +96,12 @@ jobs:
           if [ -z "$pr_number" ]; then
             echo "Error: No PR found for branch $BRANCH_NAME."
             exit 1
-          
+          fi
           pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
           if [ "$pr_state" != "CLOSED" ]; then
             echo "Error: PR #$pr_number is not in finished state (closed)."
             exit 1
-          
+          fi
 
       - name: Reopen and Set PR to Draft
         run: |
