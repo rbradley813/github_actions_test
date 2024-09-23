@@ -83,7 +83,7 @@ jobs:
 
       - name: Create Draft PR
         run: |
-          gh pr create --head "FEATURE_BRANCH" --base main --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
+          gh pr create --head "FEATURE_BRANCH" --base main --title "Draft PR for "ikmdev:${{env.TRUNK_BRANCH}}"" --body "This is a draft PR for $FEATURE_BRANCH" --draft
 
 
   finish-feature:
