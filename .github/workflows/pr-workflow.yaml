@@ -20,22 +20,75 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GH_TOKEN: '${{ github.token }}'
-  IKMDEVOPS_PAT: '${{secrets.IKMDEVOPS_PAT_TOKEN}}'
-  BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
-  DEFAULT_VERSION: '1.0.0'
-  UNIQUE_VERSION: '1.0.0-unique'
-
 jobs:
-  start-feature:
-    if: ${{ github.event.inputs.action == 'start' }}
+  build:
     runs-on: ubuntu-24.04
-    name: Start Feature Job
+    env:
+      FORK_OWNER: ${{ github.actor }}
+      BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
+      DEFAULT_VERSION: '1.0.0'
+      UNIQUE_VERSION: '1.0.0-unique'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout base repository
+        uses: actions/checout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
+          fetch-depth: 0
+
+#      - name: Ensure fork exists
+#        uses: actions/github-script@v6
+#        with:
+#          script: |
+#            const forkOwner = process.env.FORK_OWNER;
+#            const repo = context.repo.repo;
+#            const baseOwner = context.repo.owner;
+#            try {
+#              await github.rest.repos.get({
+#                owner: forkOwner,
+#                repo: repo,
+#              });
+#              console.log(`Fork ${forkOwner}/${repo} already exists.`);
+#            } catch (error) {
+#              if (error.status === 404) {
+#                console.log(`Fork ${forkOwner}/${repo} does not exist. Creating fork.`);
+#                await github.rest.repos.createFork({
+#                  owner: baseOwner,
+#                  repo: repo,
+#                });
+#                // Wait for the fork to be created
+#                let forkExists = false;
+#                for (let i = 0; i < 10; i++) {
+#                  try {
+#                    await github.rest.repos.get({
+#                      owner: forkOwner,
+#                      repo: repo,
+#                    });
+#                    forkExists = true;
+#                    break;
+#                  } catch (e) {
+#                    if (e.status === 404) {
+#                      console.log('Waiting for fork to be available...');
+#                      await new Promise(resolve => setTimeout(resolve, 5000));
+#                    } else {
+#                      throw e;
+#                    }
+#                  }
+#                }
+#                if (!forkExists) {
+#                  core.setFailed(`Fork ${forkOwner}/${repo} was not created in time.`);
+#                }
+#              } else {
+#                throw error;
+#              }
+#            }
+
+      - name: Add fork as remote
+        run: |
+          git remote add fork https://x-access-token:${{ secrets.IKMDEVOPS_PAT_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
+          git fetch fork
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -43,12 +96,18 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
+
+
+
+
+  # Start Action #
       - name: Check if PR exists
+        if: ${{ github.event.inputs.action == 'start' }}
         id: check_pr
         uses: actions/github-script@v6
         with:
           script: |
-            const forkOwner = context.payload.repository.owner.login;
+            const forkOwner = process.env.FORK_OWNER;
             const branchName = process.env.BRANCH_NAME;
             const { data: pulls } = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -79,7 +138,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const forkOwner = context.payload.repository.owner.login;
+            const forkOwner = process.env.FORK_OWNER;
             const branchName = process.env.BRANCH_NAME;
             const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
@@ -92,18 +151,14 @@ jobs:
             });
             core.setOutput('pr_number', pr.data.number);
 
-  finish-feature:
-    if: ${{ github.event.inputs.action == 'finish' }}
-    runs-on: ubuntu-24.04
-    name: Finish Feature Job
-
-    steps:
+  # Finish Action #
       - name: Find PR
+        if: ${{ github.event.inputs.action == 'finish' }}
         id: find_pr
         uses: actions/github-script@v6
         with:
           script: |
-            const forkOwner = context.payload.repository.owner.login;
+            const forkOwner = process.env.FORK_OWNER;
             const branchName = process.env.BRANCH_NAME;
             const { data: pulls } = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -118,6 +173,7 @@ jobs:
             }
 
       - name: Set PR to ready for review
+        if: ${{ github.event.inputs.action == 'finish' }}
         uses: actions/github-script@v6
         with:
           script: |
@@ -130,9 +186,11 @@ jobs:
             });
 
       - name: Modify pom.xml and push changes
+        if: ${{ github.event.inputs.action == 'finish' }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git fetch fork $BRANCH_NAME
           git checkout $BRANCH_NAME
   
           # Modify pom.xml to change version to DEFAULT_VERSION
@@ -142,18 +200,14 @@ jobs:
           git commit -m "Revert maven coordinates to default version"
           git push origin $BRANCH_NAME
 
-  resume-feature:
-    if: ${{ github.event.inputs.action == 'resume' }}
-    runs-on: ubuntu-24.04
-    name: Resume Feature Job
-
-    steps:
+  # Resume Action #
       - name: Find PR
+        if: ${{ github.event.inputs.action == 'resume' }}
         id: find_pr
         uses: actions/github-script@v6
         with:
           script: |
-            const forkOwner = context.payload.repository.owner.login;
+            const forkOwner = process.env.FORK_OWNER;
             const branchName = process.env.BRANCH_NAME;
             const { data: pulls } = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -173,6 +227,7 @@ jobs:
             }
 
       - name: Set PR to draft
+        if: ${{ github.event.inputs.action == 'resume' }}
         uses: actions/github-script@v6
         with:
           script: |
@@ -185,9 +240,11 @@ jobs:
             });
 
       - name: Modify pom.xml and push changes
+        if: ${{ github.event.inputs.action == 'resume' }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git fetch fork $BRANCH_NAME
           git checkout $BRANCH_NAME
   
           # Modify pom.xml to change version to UNIQUE_VERSION
