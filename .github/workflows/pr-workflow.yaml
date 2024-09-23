@@ -34,10 +34,8 @@ jobs:
 
     steps:
       - name: Checkout base repository
-        uses: actions/checout@v4
+        uses: actions/checout@v3
         with:
-          repository: ${{ github.repository }}
-          ref: main
           token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
           fetch-depth: 0
 
