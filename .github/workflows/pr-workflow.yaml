@@ -16,10 +16,6 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-  pull-requests: write
-
 env:
   FORK_OWNER: ${{ github.actor }}
   BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
