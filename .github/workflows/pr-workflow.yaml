@@ -154,7 +154,7 @@ jobs:
   # Finish Action #
       - name: Find PR
         if: ${{ github.event.inputs.action == 'finish' }}
-        id: find_pr
+        id: find_pr_finish
         uses: actions/github-script@v6
         with:
           script: |
@@ -177,7 +177,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const pr_number = ${{ steps.find_pr.outputs.pr_number }};
+            const pr_number = ${{ steps.find_pr_finish.outputs.pr_number }};
             await github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -203,7 +203,7 @@ jobs:
   # Resume Action #
       - name: Find PR
         if: ${{ github.event.inputs.action == 'resume' }}
-        id: find_pr
+        id: find_pr_resume
         uses: actions/github-script@v6
         with:
           script: |
@@ -231,7 +231,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const pr_number = ${{ steps.find_pr.outputs.pr_number }};
+            const pr_number = ${{ steps.find_pr_resume.outputs.pr_number }};
             await github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
