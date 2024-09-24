@@ -35,12 +35,12 @@ jobs:
         with:
           repository: ${{ github.repository }}
           ref: main
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
+          token: ${{ secrets.GITHUB_TOKEN}}
           fetch-depth: 0
 
       - name: Add fork as remote
         run: |
-          git remote add fork https://x-access-token:${{ secrets.IKMDEVOPS_PAT_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
+          git remote add fork https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
           git fetch fork
 
       - name: Set up Java
