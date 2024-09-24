@@ -19,7 +19,7 @@ on:
         required: true
 
 env:
-    GH_TOKEN: ${{ github.token }}
+    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     IKMDEVOPS_PAT: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
     BASE_REPO_OWNER: ikmdev
     BASE_REPO_NAME: github_actions_test
