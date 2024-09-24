@@ -23,8 +23,8 @@ permissions:
   pull-requests: write
 
 env:
-  GH_TOKEN: "${{ github.token }}"
-  FORK_OWNER: "${{ github.actor }}"
+  GITHUB_TOKEN: ${{ github.token }}
+  FORK_OWNER: ${{ github.actor }}
   BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
   DEFAULT_VERSION: '1.0.0'
   UNIQUE_VERSION: '1.0.0-unique'
@@ -56,6 +56,11 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN}}
           fetch-depth: 0
+
+      - name: Add fork as remote
+        run: |
+          git remote add fork https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
+          git fetch fork
 
       - name: Set up Java
         uses: actions/setup-java@v4
