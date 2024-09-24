@@ -35,6 +35,19 @@ jobs:
     name: Start Feature Job
 
     steps:
+      - name: Determine base repository
+        id: determine_base_repo
+        run: |
+          echo "FORK_OWNER=${{ github.actor }}" >> $GITHUB_ENV
+          if [ "${{ github.event.repository.fork }}" = "true" ]; then
+            echo "BASE_OWNER=${{ github.event.repository.parent.owner.login }}" >> $GITHUB_ENV
+            echo "BASE_REPO=${{ github.event.repository.parent.name }}" >> $GITHUB_ENV
+          else
+            echo "BASE_OWNER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "BASE_REPO=${{ github.event.repository.name }}" >> $GITHUB_ENV
+          fi
+          echo "BASE_REPO_URL=https://github.com/${{ env.BASE_OWNER }}/${{ env.BASE_REPO }}" >> $GITHUB_ENV
+          
       # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -87,7 +100,7 @@ jobs:
         run: |
           REPO_URL="https://github.com/${{ env.BASE_REPO_OWNER }}/${{ env.BASE_REPO_NAME }}"
           echo "Creating a Pull Request in repository: $REPO_URL"
-          gh pr create --head "FEATURE_BRANCH" --base main --repo "${{github.repository }}"\ --title "Draft PR for \$$FEATURE_BRANCH" --body "This is a draft PR for #\$FEATURE_BRANCH" --draft
+          gh pr create --head "FEATURE_BRANCH" --base main --repo "$BASE_REPO" \ --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
 
 
   finish-feature:
