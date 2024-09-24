@@ -100,7 +100,7 @@ jobs:
         run: |
           REPO_URL="https://github.com/${{ env.BASE_REPO_OWNER }}/${{ env.BASE_REPO_NAME }}"
           echo "Creating a Pull Request in repository: $REPO_URL"
-          gh pr create --head "FEATURE_BRANCH" --base main --repo "$BASE_REPO" \ --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
+          gh pr create --head "FEATURE_BRANCH" --base main --repo "$BASE_REPO" --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
 
 
   finish-feature:
