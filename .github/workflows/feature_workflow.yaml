@@ -23,6 +23,7 @@ env:
     IKMDEVOPS_PAT: "${{secrets.IKMDEVOPS_PAT_TOKEN}}"
     TRUNK_BRANCH: "main"
     BRANCH_NAME: "${{ github.event.inputs.branch_name }}"
+#    FEATURE_BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
     FEATURE_BRANCH: "feature/$BRANCH_NAME"
     PR_NUMBER: "${{ github.event.number }}"
     

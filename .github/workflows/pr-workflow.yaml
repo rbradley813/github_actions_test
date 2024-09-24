@@ -1,5 +1,7 @@
 name: Feature Branch Lifecycle Workflow
 
+run-name: 'Build Feature Branch Workflow -- ${{ github.head_ref || github.ref_name }}'
+
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +18,10 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+  pull-requests: write
+
 env:
   GH_TOKEN: "${{ github.token }}"
   FORK_OWNER: "${{ github.actor }}"
@@ -30,14 +36,29 @@ jobs:
     name: Start Feature Job
 
     steps:
+      - name: Determine base repository
+        id: determine_base_repo
+        run: |
+          echo "FORK_OWNER=${{ github.actor }}" >> $GITHUB_ENV
+          if [ "${{ github.event.repository.fork }}" = "true" ]; then
+            echo "BASE_OWNER=${{ github.event.repository.parent.owner.login }}" >> $GITHUB_ENV
+            echo "BASE_REPO=${{ github.event.repository.parent.name }}" >> $GITHUB_ENV
+          else
+            echo "BASE_OWNER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "BASE_REPO=${{ github.event.repository.name }}" >> $GITHUB_ENV
+          fi
+          echo "BASE_REPO_URL=https://github.com/${{ env.BASE_OWNER }}/${{ env.BASE_REPO }}" >> $GITHUB_ENV
+
       - name: Checkout base repository
-        uses: actions/checout@v4
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN}}
           fetch-depth: 0
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
@@ -96,20 +117,20 @@ jobs:
 
     steps:
       - name: Checkout base repository
-        uses: actions/checout@v4
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
           ref: main
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
+          token: ${{ secrets.GITHUB_TOKEN}}
           fetch-depth: 0
 
       - name: Add fork as remote
         run: |
-          git remote add fork https://x-access-token:${{ secrets.IKMDEVOPS_PAT_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
+          git remote add fork https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
           git fetch fork
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
@@ -169,20 +190,20 @@ jobs:
 
     steps:
       - name: Checkout base repository
-        uses: actions/checout@v4
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
           ref: main
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
+          token: ${{ secrets.GITHUB_TOKEN}}
           fetch-depth: 0
 
       - name: Add fork as remote
         run: |
-          git remote add fork https://x-access-token:${{ secrets.IKMDEVOPS_PAT_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
+          git remote add fork https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.FORK_OWNER }}/${{ github.event.repository.name }}.git
           git fetch fork
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'zulu'
