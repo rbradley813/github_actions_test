@@ -111,8 +111,8 @@ jobs:
             const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: `${forkOwner}:${branchName}`,
-              base: `${BASE_OWNER}/${BASE_REPO}:${BASE_BRANCH}`,
+              head: `${forkOwner}:${branchName}`,{
+              base: `${{ env.BASE_OWNER}}/${{ env.BASE_REPO}}:${{ env.BASE_BRANCH}}`,
               title: 'Update maven coordinates to unique version',
               body: 'This PR updates the maven coordinates to a unique version.',
               draft: true,
