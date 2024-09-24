@@ -62,7 +62,7 @@ jobs:
 
       - name: Check for existing PR
         run: |
-          pr_exists=$(gh pr list --head "NEW_BRANCH_NAME" --json number --jq '.[].number')
+          pr_exists=$(gh pr list --head "FEATURE_BRANCH" --json number --jq '.[].number')
           if [ -n "$pr_exists" ]; then
             echo "Error: Pull Request already exists for branch $FEATURE_BRANCH."
             exit 1
@@ -70,6 +70,7 @@ jobs:
 
       - name: Update Maven coordinates
         run: |
+          git checkout -b $FEATURE_BRANCH
           VERSION="1.0.0-${FEATURE_BRANCH}-SNAPSHOT"
           mvn versions:set -DnewVersion=$VERSION
           mvn versions:commit
@@ -85,7 +86,7 @@ jobs:
 
       - name: Create Draft PR
         run: |
-          gh pr create --head "FEATURE_BRANCH" --base "$BASE_REPO_OWNER/$BASE_REPO_NAME:$BASE_BRANCH" --title "Draft PR for \$$NEW_BRANCH_NAME" --body "This is a draft PR for #\$FEATURE_BRANCH" --draft
+          gh pr create --head "FEATURE_BRANCH" --base "$BASE_REPO_OWNER/$BASE_REPO_NAME:$BASE_BRANCH" --title "Draft PR for \$$FEATURE_BRANCH" --body "This is a draft PR for #\$FEATURE_BRANCH" --draft
 
 
   finish-feature:
