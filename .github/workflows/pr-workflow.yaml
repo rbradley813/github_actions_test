@@ -29,6 +29,7 @@ env:
   BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
   BASE_OWNER: 'ikmdev'
   BASE_REPO: 'github_actions_test'
+  BASE_BRANCH: 'main'
   DEFAULT_VERSION: '1.0.0'
   UNIQUE_VERSION: '1.0.0-unique'
 
@@ -111,7 +112,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               head: `${forkOwner}:${branchName}`,
-              base: 'main',
+              base: `${BASE_OWNER}/${BASE_REPO}:${BASE_BRANCH}`,
               title: 'Update maven coordinates to unique version',
               body: 'This PR updates the maven coordinates to a unique version.',
               draft: true,
