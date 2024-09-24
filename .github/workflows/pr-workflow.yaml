@@ -16,10 +16,9 @@ on:
         required: true
         type: string
 
-
-
 env:
-  FORK_OWNER: ${{ github.actor }}
+  GH_TOKEN: "${{ github.token }}"
+  FORK_OWNER: "${{ github.actor }}"
   BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
   DEFAULT_VERSION: '1.0.0'
   UNIQUE_VERSION: '1.0.0-unique'
@@ -34,8 +33,6 @@ jobs:
       - name: Checkout base repository
         uses: actions/checout@v4
         with:
-          repository: ${{ github.repository }}
-          ref: main
           token: ${{ secrets.IKMDEVOPS_PAT_TOKEN}}
           fetch-depth: 0
 
@@ -65,7 +62,7 @@ jobs:
       - name: Create and push changes
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git checkout -b $BRANCH_NAME
   
           # Modify pom.xml to change version to UNIQUE_VERSION
