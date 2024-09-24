@@ -25,7 +25,10 @@ permissions:
 env:
   GITHUB_TOKEN: ${{ github.token }}
   FORK_OWNER: ${{ github.actor }}
+
   BRANCH_NAME: 'feature/${{ github.event.inputs.branch_name }}'
+  BASE_OWNER: 'ikmdev'
+  BASE_REPO: 'github_actions_test'
   DEFAULT_VERSION: '1.0.0'
   UNIQUE_VERSION: '1.0.0-unique'
 
