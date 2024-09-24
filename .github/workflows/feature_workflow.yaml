@@ -22,7 +22,7 @@ env:
     GH_TOKEN: ${{ github.token }}
     IKMDEVOPS_PAT: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
     BASE_REPO_OWNER: ikmdev
-    BASE_REPO_NAME: gtihub_actions_test
+    BASE_REPO_NAME: github_actions_test
     BASE_BRANCH: main
     BRANCH_NAME: ${{ github.event.inputs.branch_name }}
     FEATURE_BRANCH: feature/${{ github.event.inputs.branch_name }}
