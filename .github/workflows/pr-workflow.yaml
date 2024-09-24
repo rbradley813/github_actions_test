@@ -106,11 +106,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const forkOwner = process.env.BASE_OWNER;
-            const branchName = process.env.BASE_REPO;
+            const baseOwner = process.env.BASE_OWNER;
+            const baseRepo = process.env.BASE_REPO;
+            const forkOwner = process.env.FORK_OWNER;
+            const branchName = process.env.BRANCH_NAME;
+            
             const pr = await github.rest.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: baseOwner,
+              repo: baseRepo,
               head: `${forkOwner}:${branchName}`,
               base: 'main',
               title: 'Update maven coordinates to unique version',
