@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Run Feature Branch Action
-        uses: ikmdev/maven-unique-feature-action/.github/actions/feature-branch-action@main
+        uses: ikmdev/maven-unique-feature-action@main
         with:
           action: ${{ github.event.inputs.action }}
           branch_name: ${{ github.event.inputs.branch_name }}
