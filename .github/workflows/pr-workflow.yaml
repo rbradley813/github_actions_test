@@ -8,6 +8,7 @@ on:
       action:
         description: 'Select an action: start, finish, or resume'
         required: true
+        default: 'start'
         type: choice
         options:
           - start
@@ -16,10 +17,9 @@ on:
       branch_name:
         description: 'Enter the feature branch name (without "feature/")'
         required: true
-
-env:
-  DEFAULT_VERSION: '1.0.0'
-  UNIQUE_VERSION: '1.0.0-unique'
+      unique_version:
+        description: 'Enter the unique version number'
+        required: true
 
 jobs:
   start:
@@ -43,12 +43,12 @@ jobs:
       - name: Update Maven Coordinates
         run: |
           echo "Updating Maven coordinates..."
-          sed -i 's|<version>.*</version>|<version>'$UNIQUE_VERSION'</version>|' pom.xml
+          mvn versions:set -DnewVersion=${{ github.event.inputs.unique_version }}
 
       - name: Commit and Push Changes
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
           git checkout -b "${{ steps.vars.outputs.BRANCH_NAME }}"
           git add .
@@ -58,6 +58,7 @@ jobs:
       - name: Create Pull Request (Start)
         uses: actions/github-script@v6
         with:
+          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
           script: |
             await github.rest.pulls.create({
               owner: '${{ github.event.repository.parent.owner.login }}',
@@ -91,12 +92,12 @@ jobs:
       - name: Update Maven Coordinates
         run: |
           echo "Updating Maven coordinates..."
-          sed -i 's|<version>.*</version>|<version>'$DEFAULT_VERSION'</version>|' pom.xml
+          mvn versions:set -DnewVersion=${{ github.event.inputs.unique_version }}
 
       - name: Commit and Push Changes
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
           git add .
           git commit -m "Update Maven coordinates for finish"
@@ -105,6 +106,7 @@ jobs:
       - name: Change Pull Request State to Ready
         uses: actions/github-script@v6
         with:
+          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
           script: |
             const { data: pulls } = await github.rest.pulls.list({
               owner: '${{ github.event.repository.parent.owner.login }}',
@@ -146,12 +148,12 @@ jobs:
       - name: Update Maven Coordinates
         run: |
           echo "Updating Maven coordinates..."
-          sed -i 's|<version>.*</version>|<version>'$UNIQUE_VERSION'</version>|' pom.xml
+          mvn versions:set -DnewVersion=${{ github.event.inputs.unique_version }}
 
       - name: Commit and Push Changes
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
           git add .
           git commit -m "Update Maven coordinates for resume"
@@ -160,6 +162,7 @@ jobs:
       - name: Change Pull Request State to Draft
         uses: actions/github-script@v6
         with:
+          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
           script: |
             const { data: pulls } = await github.rest.pulls.list({
               owner: '${{ github.event.repository.parent.owner.login }}',
