@@ -24,9 +24,15 @@ jobs:
     runs-on: ubuntu-24.04
 
     permissions:
-      contents: write  # Needed to push changes to the repository
+      contents: write
 
     steps:
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
       - name: Set up variables
         run: |
           echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
@@ -35,7 +41,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -55,7 +61,7 @@ jobs:
       - name: Modify Maven coordinate
         run: |
           # Extract the current version from pom.xml
-          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          ORIGINAL_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Original version: $ORIGINAL_VERSION"
 
           # Append '-feature-branch_name' to the version
@@ -63,11 +69,7 @@ jobs:
           echo "New version: $NEW_VERSION"
 
           # Update the version in pom.xml
-          xmllint --shell pom.xml << EOF
-          cd /*[local-name()='project']/*[local-name()='version']
-          set $NEW_VERSION
-          save pom.xml
-          EOF
+          mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
       - name: Commit and push changes
         run: |
@@ -80,18 +82,24 @@ jobs:
     runs-on: ubuntu-24.04
 
     permissions:
-      contents: write  # Needed to push changes to the repository
+      contents: write
 
     steps:
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
       - name: Set up variables
         run: |
           echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
           echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -106,19 +114,15 @@ jobs:
       - name: Modify Maven coordinate
         run: |
           # Extract the current version from pom.xml
-          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
-          echo "Current version: $ORIGINAL_VERSION"
+          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version: $CURRENT_VERSION"
 
           # Remove '-feature-branch_name' from the version
-          NEW_VERSION=$(echo "$ORIGINAL_VERSION" | sed "s/-feature-${{ github.event.inputs.branch_name }}//")
+          NEW_VERSION=$(echo "$CURRENT_VERSION" | sed "s/-feature-${{ github.event.inputs.branch_name }}//")
           echo "Reverted version: $NEW_VERSION"
 
           # Update the version in pom.xml
-          xmllint --shell pom.xml << EOF
-          cd /*[local-name()='project']/*[local-name()='version']
-          set $NEW_VERSION
-          save pom.xml
-          EOF
+          mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
       - name: Commit and push changes
         run: |
@@ -131,18 +135,24 @@ jobs:
     runs-on: ubuntu-24.04
 
     permissions:
-      contents: write  # Needed to push changes to the repository
+      contents: write
 
     steps:
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
       - name: Set up variables
         run: |
           echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
           echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -155,24 +165,22 @@ jobs:
           echo "Checked out branch ${{ env.BRANCH_NAME }}"
 
       - name: Modify Maven coordinate
+        id: modify_maven_coordinate
         run: |
           # Extract the current version from pom.xml
-          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
-          echo "Current version: $ORIGINAL_VERSION"
+          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version: $CURRENT_VERSION"
 
-          # Append '-feature-branch_name' to the version if not already present
-          if [[ "$ORIGINAL_VERSION" != *"-feature-${{ github.event.inputs.branch_name }}" ]]; then
-            NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
+          # Check if version already includes '-feature-branch_name'
+          if [[ "$CURRENT_VERSION" != *"-feature-${{ github.event.inputs.branch_name }}" ]]; then
+            # Append '-feature-branch_name' to the version
+            NEW_VERSION="${CURRENT_VERSION}-feature-${{ github.event.inputs.branch_name }}"
             echo "New version: $NEW_VERSION"
 
             # Update the version in pom.xml
-            xmllint --shell pom.xml << EOF
-            cd /*[local-name()='project']/*[local-name()='version']
-            set $NEW_VERSION
-            save pom.xml
-            EOF
+            mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
-            # Set an output to indicate the version was changed
+            # Set output to indicate that version was changed
             echo "::set-output name=version_changed::true"
           else
             echo "Version already includes '-feature-${{ github.event.inputs.branch_name }}'"
