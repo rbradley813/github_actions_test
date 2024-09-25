@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           ref: main
           fetch-depth: 0
 
@@ -58,7 +58,7 @@ jobs:
       - name: Create Pull Request (Start)
         uses: actions/github-script@v6
         with:
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.pulls.create({
               owner: '${{ github.event.repository.parent.owner.login }}',
@@ -85,7 +85,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ steps.vars.outputs.BRANCH_NAME }}
           fetch-depth: 0
 
@@ -106,7 +106,7 @@ jobs:
       - name: Change Pull Request State to Ready
         uses: actions/github-script@v6
         with:
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { data: pulls } = await github.rest.pulls.list({
               owner: '${{ github.event.repository.parent.owner.login }}',
@@ -141,7 +141,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ steps.vars.outputs.BRANCH_NAME }}
           fetch-depth: 0
 
@@ -162,7 +162,7 @@ jobs:
       - name: Change Pull Request State to Draft
         uses: actions/github-script@v6
         with:
-          token: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { data: pulls } = await github.rest.pulls.list({
               owner: '${{ github.event.repository.parent.owner.login }}',
