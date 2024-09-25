@@ -1,12 +1,13 @@
-name: Feature Branch Lifecycle Workflow
-
-run-name: 'Build Feature Branch Workflow -- ${{ github.head_ref || github.ref_name }}'
+name: Feature Branch Workflow
 
 on:
   workflow_dispatch:
     inputs:
-      feature_action:
-        description: 'Select which feature action to run'
+      branch_name:
+        description: 'Enter the branch name without the "feature/" prefix'
+        required: true
+      action:
+        description: 'Choose an action: start, finish, or resume'
         required: true
         default: 'start'
         type: choice
@@ -14,191 +15,171 @@ on:
           - start
           - finish
           - resume
-      branch_name:
-        description: 'Enter the name of the branch to operate on (without feature/ prefix)'
-        required: true
 
-env:
-    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    IKMDEVOPS_PAT: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
-    BASE_REPO_OWNER: ikmdev
-    BASE_REPO_NAME: github_actions_test
-    BASE_BRANCH: main
-    BRANCH_NAME: ${{ github.event.inputs.branch_name }}
-    FEATURE_BRANCH: feature/${{ github.event.inputs.branch_name }}
-    PR_NUMBER: ${{ github.event.number }}
-    
 jobs:
-  start-feature:
-    if: ${{ github.event.inputs.feature_action == 'start' }}
+  start_job:
+    if: ${{ github.event.inputs.action == 'start' }}
     runs-on: ubuntu-24.04
-    name: Start Feature Job
+
+    permissions:
+      contents: write  # Needed to push changes to the repository
 
     steps:
-      - name: Determine base repository
-        id: determine_base_repo
+      - name: Set up variables
         run: |
-          echo "FORK_OWNER=${{ github.actor }}" >> $GITHUB_ENV
-          if [ "${{ github.event.repository.fork }}" = "true" ]; then
-            echo "BASE_OWNER=${{ github.event.repository.parent.owner.login }}" >> $GITHUB_ENV
-            echo "BASE_REPO=${{ github.event.repository.parent.name }}" >> $GITHUB_ENV
-          else
-            echo "BASE_OWNER=${{ github.repository_owner }}" >> $GITHUB_ENV
-            echo "BASE_REPO=${{ github.event.repository.name }}" >> $GITHUB_ENV
-          fi
-          echo "BASE_REPO_URL=https://github.com/${{ env.BASE_OWNER }}/${{ env.BASE_REPO }}" >> $GITHUB_ENV
-          
-      # Checkout the repository
-      - name: Checkout Repository
+          echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
+          echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
+
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      # Set Git user email and name
-      - name: Set up Git config
-        run: |
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-
-      # Check and add feature/ prefix to branch name if missing
-      - name: Ensure feature/ prefix
-        run: |
-          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-          if [[ $BRANCH_NAME != feature/* ]]; then
-            FEATURE_BRANCH="feature/$BRANCH_NAME"
-            echo "Renaming branch to $FEATURE_BRANCH"
-            git branch -m "$FEATURE_BRANCH"
-            git push origin -u "$FEATURE_BRANCH"
-          else
-            FEATURE_BRANCH="$BRANCH_NAME"
-            echo "Branch name already starts with feature/"
-          fi
-          echo "FEATURE_BRANCH=$FEATURE_BRANCH" >> $GITHUB_ENV
-
-      - name: Check for existing PR
-        run: |
-          pr_exists=$(gh pr list --head "FEATURE_BRANCH" --json number --jq '.[].number')
-          if [ -n "$pr_exists" ]; then
-            echo "Error: Pull Request already exists for branch $FEATURE_BRANCH."
-            exit 1
-          fi
-
-      - name: Update Maven coordinates
-        run: |
-          VERSION="1.0.0-${FEATURE_BRANCH}-SNAPSHOT"
-          mvn versions:set -DnewVersion=$VERSION
-          mvn versions:commit
-
-      - name: Commit Maven Version Update
-        run: |
-          git add pom.xml
-          git commit -a -m "chore: update Maven coordinates to $VERSION" || echo "No changes to commit"
-
-      - name: Push Changes
-        run: |
-          git push origin $FEATURE_BRANCH
-
-      - name: Create Draft PR
-        run: |
-          REPO_URL="https://github.com/${{ env.BASE_REPO_OWNER }}/${{ env.BASE_REPO_NAME }}"
-          echo "Creating a Pull Request in repository: $REPO_URL"
-          gh pr create --head "FEATURE_BRANCH" --base main --repo "$BASE_REPO" --title "Draft PR for $FEATURE_BRANCH" --body "This is a draft PR for $FEATURE_BRANCH" --draft
-
-
-  finish-feature:
-    if: ${{ github.event.inputs.feature_action == 'finish' }}
-    runs-on: ubuntu-24.04
-    name: Finish Feature Job
-
-    steps:
-      # Set Git user email and name
-      - name: Set up Git config
-        run: |
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '21'
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
-      - name: Find and Check PR State
+      - name: Configure Git
         run: |
-          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
-          if [ -z "$pr_number" ]; then
-          echo "Error: No PR found for branch $BRANCH_NAME."
-          exit 1
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create or switch to branch
+        run: |
+          if git ls-remote --exit-code --heads origin "${{ env.BRANCH_NAME }}"; then
+            git checkout "${{ env.BRANCH_NAME }}"
+            echo "Checked out existing branch ${{ env.BRANCH_NAME }}"
+          else
+            git checkout -b "${{ env.BRANCH_NAME }}"
+            echo "Created and checked out new branch ${{ env.BRANCH_NAME }}"
           fi
-          pr_draft=$(gh pr view "$pr_number" --json isDraft --jq '.isDraft')
-          if [ "$pr_draft" != "true" ]; then
-          echo "Error: PR #$pr_number is not in draft state."
-          exit 1
-          fi
 
-      - name: Set PR to Finish
+      - name: Modify Maven coordinate
         run: |
-          gh pr ready "$pr_number"
+          # Extract the current version from pom.xml
+          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          echo "Original version: $ORIGINAL_VERSION"
 
-      - name: Update Maven coordinates to default version
+          # Append '-feature-branch_name' to the version
+          NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
+          echo "New version: $NEW_VERSION"
+
+          # Update the version in pom.xml
+          xmllint --shell pom.xml << EOF
+          cd /*[local-name()='project']/*[local-name()='version']
+          set $NEW_VERSION
+          save pom.xml
+          EOF
+
+      - name: Commit and push changes
         run: |
-          VERSION="1.0.0-${{ github.event.inputs.branch_name }}-SNAPSHOT"
-          VERSION="1.0.0"
-          mvn versions:set -DnewVersion=$VERSION
-          mvn versions:commit
           git add pom.xml
-          git commit -m "chore: set Maven coordinates to $VERSION"
-          git pull origin HEAD
-          git push -u origin HEAD
+          git commit -m "[START] Update Maven coordinate for ${{ env.BRANCH_NAME }}"
+          git push origin "${{ env.BRANCH_NAME }}"
 
-
-  resume-feature:
-    if: ${{ github.event.inputs.feature_action == 'resume' }}
+  finish_job:
+    if: ${{ github.event.inputs.action == 'finish' }}
     runs-on: ubuntu-24.04
-    name: Resume Feature Job
+
+    permissions:
+      contents: write  # Needed to push changes to the repository
 
     steps:
-      - name: Set up Git config
+      - name: Set up variables
         run: |
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
+          echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
+          echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          distribution: 'zulu'
-          java-version: '21'
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
-      - name: Find and Check PR State
+      - name: Configure Git
         run: |
-          BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-          pr_number=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[].number')
-          if [ -z "$pr_number" ]; then
-            echo "Error: No PR found for branch $BRANCH_NAME."
-            exit 1
-          fi
-          pr_state=$(gh pr view "$pr_number" --json state --jq '.state')
-          if [ "$pr_state" != "CLOSED" ]; then
-            echo "Error: PR #$pr_number is not in finished state (closed)."
-            exit 1
-          fi
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: Reopen and Set PR to Draft
+      - name: Switch to branch
         run: |
-          gh pr reopen "$pr_number"
-          gh pr edit "$pr_number" --draft
+          git checkout "${{ env.BRANCH_NAME }}"
+          echo "Checked out branch ${{ env.BRANCH_NAME }}"
 
-      - name: Update Maven coordinates to unique version
+      - name: Modify Maven coordinate
         run: |
-          VERSION="1.0.0-${{ github.event.inputs.feature_branch }}-SNAPSHOT"
-          mvn versions:set -DnewVersion=$VERSION
-          mvn versions:commit
+          # Extract the current version from pom.xml
+          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          echo "Current version: $ORIGINAL_VERSION"
+
+          # Remove '-feature-branch_name' from the version
+          NEW_VERSION=$(echo "$ORIGINAL_VERSION" | sed "s/-feature-${{ github.event.inputs.branch_name }}//")
+          echo "Reverted version: $NEW_VERSION"
+
+          # Update the version in pom.xml
+          xmllint --shell pom.xml << EOF
+          cd /*[local-name()='project']/*[local-name()='version']
+          set $NEW_VERSION
+          save pom.xml
+          EOF
+
+      - name: Commit and push changes
+        run: |
           git add pom.xml
-          git commit -m "chore: revert Maven coordinates to $VERSION"
-          git pull origin HEAD
-          git push -u origin HEAD
+          git commit -m "[FINISH] Revert Maven coordinate for ${{ env.BRANCH_NAME }}"
+          git push origin "${{ env.BRANCH_NAME }}"
+
+  resume_job:
+    if: ${{ github.event.inputs.action == 'resume' }}
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write  # Needed to push changes to the repository
+
+    steps:
+      - name: Set up variables
+        run: |
+          echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
+          echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Configure Git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Switch to branch
+        run: |
+          git checkout "${{ env.BRANCH_NAME }}"
+          echo "Checked out branch ${{ env.BRANCH_NAME }}"
+
+      - name: Modify Maven coordinate
+        run: |
+          # Extract the current version from pom.xml
+          ORIGINAL_VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          echo "Current version: $ORIGINAL_VERSION"
+
+          # Append '-feature-branch_name' to the version if not already present
+          if [[ "$ORIGINAL_VERSION" != *"-feature-${{ github.event.inputs.branch_name }}" ]]; then
+            NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
+            echo "New version: $NEW_VERSION"
+
+            # Update the version in pom.xml
+            xmllint --shell pom.xml << EOF
+            cd /*[local-name()='project']/*[local-name()='version']
+            set $NEW_VERSION
+            save pom.xml
+            EOF
+
+            # Set an output to indicate the version was changed
+            echo "::set-output name=version_changed::true"
+          else
+            echo "Version already includes '-feature-${{ github.event.inputs.branch_name }}'"
+            echo "::set-output name=version_changed::false"
+          fi
+
+      - name: Commit and push changes
+        if: steps.modify_maven_coordinate.outputs.version_changed == 'true'
+        run: |
+          git add pom.xml
+          git commit -m "[RESUME] Update Maven coordinate for ${{ env.BRANCH_NAME }}"
+          git push origin "${{ env.BRANCH_NAME }}"
