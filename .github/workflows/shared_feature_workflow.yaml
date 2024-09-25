@@ -32,6 +32,5 @@ jobs:
         uses: ikmdev/maven-unique-feature-action@main
         with:
           action: ${{ github.event.inputs.action }}
-
+          branch_name: ${{ github.event.inputs.branch_name }}
           unique_version: ${{ github.event.inputs.unique_version }}
-          IKMDEVOPS_PAT_TOKEN: ${{ secrets.IKMDEVOPS_PAT_TOKEN }}
