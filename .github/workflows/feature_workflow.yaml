@@ -113,14 +113,31 @@ jobs:
 
       - name: Modify Maven coordinate
         run: |
+          set -e  # Exit immediately if a command exits with a non-zero status
+          set -x  # Print commands and their arguments as they are executed
+      
           # Extract the current version from pom.xml
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Current version: $CURRENT_VERSION"
-
+      
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "Error: Unable to retrieve the current version from pom.xml"
+            exit 1
+          fi
+      
           # Remove '-feature-branch_name' from the version
           NEW_VERSION=$(echo "$CURRENT_VERSION" | sed "s/-feature-${{ github.event.inputs.branch_name }}//")
           echo "Reverted version: $NEW_VERSION"
-
+      
+          if [ "$CURRENT_VERSION" = "$NEW_VERSION" ]; then
+            echo "Warning: The suffix '-feature-${{ github.event.inputs.branch_name }}' was not found in the current version."
+          fi
+      
+          if [ -z "$NEW_VERSION" ]; then
+            echo "Error: The new version string is empty."
+            exit 1
+          fi
+      
           # Update the version in pom.xml
           mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
