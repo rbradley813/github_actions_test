@@ -20,6 +20,9 @@ on:
       unique_version:
         description: 'Enter the unique version number'
         required: true
+env:
+  BASE_REPO_OWNER: 'ikmdev'
+  BASE_REPO_NAME: 'github_actions_test'
 
 jobs:
   start:
@@ -56,8 +59,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const owner = context.payload.repository.parent ? context.payload.repository.parent.owner.login : context.repo.owner;
-            const repo = context.payload.repository.parent ? context.payload.repository.parent.name : context.repo.repo;
+            const owner = process.env.BASE_REPO_OWNER;
+            const repo = process.env.BASE_REPO_NAME;
             const head = `${context.actor}:${process.env.BRANCH_NAME}`;
             const base = 'main'
             const title = `Feature: ${context.payload.inputs.branch_name}`;
