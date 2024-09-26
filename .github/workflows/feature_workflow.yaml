@@ -42,20 +42,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: true
-          ref: "${{ env.BRANCH_NAME }}"
 
       - name: Configure Git
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Install Parent POM
-        run: |
-          # Navigate to the parent POM directory
-          cd ./pom.xml
-          # Install the Parent POM
-          mvn install -N -DskipTests
 
       - name: Create or switch to branch
         run: |
@@ -70,9 +61,6 @@ jobs:
       - name: Modify Maven coordinate
         run: |
           set -e
-          
-          # Navigate back to the child module directory
-          cd ./pom.xml
 
           # Extract the current version from pom.xml
           ORIGINAL_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
