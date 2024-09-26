@@ -96,6 +96,11 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
+      - name: Set up variables
+        run: |
+          echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
+          echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
