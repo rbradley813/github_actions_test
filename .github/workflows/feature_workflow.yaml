@@ -1,7 +1,5 @@
 name: Feature Branch Workflow (NO PR)
 
-run-name: 'Feature Workflow -- ${{ github.head_ref || github.ref_name }}'
-
 on:
   workflow_dispatch:
     inputs:
