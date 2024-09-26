@@ -73,8 +73,8 @@ jobs:
           NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
           echo "New version: $NEW_VERSION"
 
-          # Update the version in pom.xml
-          mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
+          # Update the version in pom.xml without changing the parent version
+          mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessParent=false
 
       - name: Commit and push changes
         run: |
@@ -133,10 +133,10 @@ jobs:
             exit 1
           fi
 
-          # Update the version in pom.xml
-          mvn versions:set -DnewVersion="$ORIGINAL_VERSION" -DgenerateBackupPoms=false
+          # Update the version in pom.xml without changing the parent version
+          mvn versions:set -DnewVersion="$ORIGINAL_VERSION" -DgenerateBackupPoms=false -DprocessParent=false
 
-          # Optional: Remove the original_version.txt file
+          # Remove the original_version.txt file
           rm original_version.txt
 
       - name: Commit and push changes
@@ -201,8 +201,8 @@ jobs:
             NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
             echo "New version: $NEW_VERSION"
 
-            # Update the version in pom.xml
-            mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
+           # Update the version in pom.xml without changing the parent version
+            mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessParent=false
 
             # Set output to indicate that version was changed
             echo "::set-output name=version_changed::true"
