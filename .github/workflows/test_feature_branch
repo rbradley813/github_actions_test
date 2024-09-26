@@ -1,4 +1,4 @@
-name: Feature Branch Workflow
+name: Feature Branch Workflow -- Test
 
 run-name: "Feature Branch CI -- ${{github.event.inputs.action}} Action - feature/${{github.event.inputs.feature_branch}} "
 
