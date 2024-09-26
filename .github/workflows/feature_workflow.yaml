@@ -58,25 +58,21 @@ jobs:
 
       - name: Modify Maven coordinate
         run: |
-          set -e
 
           # Extract the current version from pom.xml
           ORIGINAL_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Original version: $ORIGINAL_VERSION"
 
-          # Save the original version to a file
-          echo "$ORIGINAL_VERSION" > original_version.txt
-
           # Append '-feature-branch_name' to the version
           NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
           echo "New version: $NEW_VERSION"
 
-          # Update the version in pom.xml without changing the parent version
+          # Update the version in pom.xml
           mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
 
       - name: Commit and push changes
         run: |
-          git add pom.xml **/pom.xml original_version.txt
+          git add pom.xml **/pom.xml
           git commit -m "[START] Update Maven coordinate for ${{ env.BRANCH_NAME }}"
           git push origin "${{ env.BRANCH_NAME }}"
 
@@ -103,7 +99,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-all: true
 
       - name: Configure Git
         run: |
@@ -113,6 +108,7 @@ jobs:
       - name: Checkout feature branch
         run: |
           git checkout "${{ env.BRANCH_NAME }}"
+          echo "Checked out branch ${{ env.BRANCH_NAME }}"
 
       - name: Verify branch
         run: |
@@ -121,22 +117,17 @@ jobs:
 
       - name: Modify Maven coordinate
         run: |
-          set -e
   
-          # Read the original version from the file
-          if [ -f original_version.txt ]; then
-            ORIGINAL_VERSION=$(cat original_version.txt)
-            echo "Original version from file: $ORIGINAL_VERSION"
-          else
-            echo "Error: original_version.txt not found"
-            exit 1
-          fi
+          # Extract the current version from pom.xml
+          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version: $CURRENT_VERSION"
+
+          # Remove '-feature-branch_name' from the version
+          NEW_VERSION=$(echo "$CURRENT_VERSION" | sed "s/-feature-${{ github.event.inputs.branch_name }}//")
+          echo "Reverted version: $NEW_VERSION"
   
           # Update the version in pom.xml without changing the parent version
-          mvn versions:set -DnewVersion="$ORIGINAL_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
-  
-          # Remove the original_version.txt file
-          rm original_version.txt
+          mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
 
       - name: Commit and push changes
         run: |
@@ -167,7 +158,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-all: true
   
       - name: Configure Git
         run: |
@@ -180,8 +170,6 @@ jobs:
 
       - name: Modify Maven coordinate
         run: |
-          set -e
-
           # Ensure we're on the correct branch
           git checkout "${{ env.BRANCH_NAME }}"
 
@@ -189,22 +177,13 @@ jobs:
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Current version: $CURRENT_VERSION"
 
-          # Read the original version from the file
-          if [ -f original_version.txt ]; then
-            ORIGINAL_VERSION=$(cat original_version.txt)
-            echo "Original version from file: $ORIGINAL_VERSION"
-          else
-            echo "Error: original_version.txt not found"
-            exit 1
-          fi
-
-          # Check if the current version matches the original version
-          if [ "$CURRENT_VERSION" == "$ORIGINAL_VERSION" ]; then
+          # Check if version already includes '-feature-branch_name'
+          if [[ "$CURRENT_VERSION" != *"-feature-${{ github.event.inputs.branch_name }}" ]]; then
             # Append '-feature-branch_name' to the version
-            NEW_VERSION="${ORIGINAL_VERSION}-feature-${{ github.event.inputs.branch_name }}"
+            NEW_VERSION="${CURRENT_VERSION}-feature-${{ github.event.inputs.branch_name }}"
             echo "New version: $NEW_VERSION"
 
-           # Update the version in pom.xml without changing the parent version
+            # Update the version in pom.xml
             mvn versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
 
             # Set output to indicate that version was changed
