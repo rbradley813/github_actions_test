@@ -83,97 +83,102 @@ jobs:
           git push origin "${{ env.BRANCH_NAME }}"
 
   finish_job:
-    if: ${{ github.event.inputs.action == 'finish' }}
-    runs-on: ubuntu-24.04
+  if: ${{ github.event.inputs.action == 'finish' }}
+  runs-on: ubuntu-24.04
 
-    permissions:
-      contents: write
+  permissions:
+    contents: write
 
-    steps:
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '21'
+  steps:
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '21'
 
-      - name: Set up variables
-        run: |
-          echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
-          echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
+    - name: Set up variables
+      run: |
+        echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
+        echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: "${{ env.BRANCH_NAME }}"
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-all: true
 
-      - name: Configure Git
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+    - name: Configure Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: Verify branch
-        run: |
-          git branch
-          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+    - name: Checkout feature branch
+      run: |
+        git checkout "${{ env.BRANCH_NAME }}"
 
-      - name: Modify Maven coordinate
-        run: |
-          set -e
+    - name: Verify branch
+      run: |
+        git branch
+        echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
 
-          # Ensure we're on the correct branch
-          git checkout "${{ env.BRANCH_NAME }}"
+    - name: Modify Maven coordinate
+      run: |
+        set -e
 
-          # Read the original version from the file
-          if [ -f original_version.txt ]; then
-            ORIGINAL_VERSION=$(cat original_version.txt)
-            echo "Original version from file: $ORIGINAL_VERSION"
-          else
-            echo "Error: original_version.txt not found"
-            exit 1
-          fi
+        # Read the original version from the file
+        if [ -f original_version.txt ]; then
+          ORIGINAL_VERSION=$(cat original_version.txt)
+          echo "Original version from file: $ORIGINAL_VERSION"
+        else
+          echo "Error: original_version.txt not found"
+          exit 1
+        fi
 
-          # Update the version in pom.xml without changing the parent version
-          mvn versions:set -DnewVersion="$ORIGINAL_VERSION" -DgenerateBackupPoms=false -DprocessParent=false
+        # Update the version in pom.xml without changing the parent version
+        mvn versions:set -DnewVersion="$ORIGINAL_VERSION" -DgenerateBackupPoms=false -DprocessParent=false
 
-          # Remove the original_version.txt file
-          rm original_version.txt
+        # Remove the original_version.txt file
+        rm original_version.txt
 
-      - name: Commit and push changes
-        run: |
-          git add pom.xml
-          git commit -m "[FINISH] Revert Maven coordinate for ${{ env.BRANCH_NAME }}"
-          git push origin "${{ env.BRANCH_NAME }}"
+    - name: Commit and push changes
+      run: |
+        git add pom.xml
+        git commit -m "[FINISH] Revert Maven coordinate for ${{ env.BRANCH_NAME }}"
+        git push origin "${{ env.BRANCH_NAME }}"
 
   resume_job:
     if: ${{ github.event.inputs.action == 'resume' }}
     runs-on: ubuntu-24.04
-
+  
     permissions:
       contents: write
-
+  
     steps:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '21'
-
+  
       - name: Set up variables
         run: |
           echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
           echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
-
+  
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: "${{ env.BRANCH_NAME }}"
-
+          fetch-all: true
+  
       - name: Configure Git
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+  
+      - name: Checkout feature branch
+        run: |
+          git checkout "${{ env.BRANCH_NAME }}"
 
       - name: Modify Maven coordinate
         run: |
