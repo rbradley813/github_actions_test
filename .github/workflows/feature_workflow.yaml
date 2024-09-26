@@ -215,7 +215,7 @@ jobs:
           fi
 
       - name: Commit and push changes
-        if: env.version_changed == 'true'
+        if: steps.modify_maven_coordinate.outputs.version_changed == 'true'
         run: |
           git add pom.xml **/pom.xml
           git commit -m "[RESUME] Update Maven coordinate for ${{ env.BRANCH_NAME }}"
