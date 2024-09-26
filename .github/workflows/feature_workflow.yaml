@@ -72,7 +72,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add '**/pom.xml'
+          git add pom.xml **/pom.xml
           git commit -m "[START] Update Maven coordinate for ${{ env.BRANCH_NAME }}"
           git push origin "${{ env.BRANCH_NAME }}"
 
@@ -131,7 +131,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add '**/pom.xml'
+          git add pom.xml **/pom.xml
           git commit -m "[FINISH] Revert Maven coordinate for ${{ env.BRANCH_NAME }}"
           git push origin "${{ env.BRANCH_NAME }}"
 
@@ -195,7 +195,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add '**/pom.xml'
+          git add pom.xml **/pom.xml
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else
