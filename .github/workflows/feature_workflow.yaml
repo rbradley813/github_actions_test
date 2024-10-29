@@ -35,6 +35,10 @@ jobs:
           echo "BRANCH_NAME=feature/${{ github.event.inputs.branch_name }}" >> $GITHUB_ENV
           echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
+      - name: Look for PR
+        uses: ikmdev/maven-unique-feature-branch-action/.github/actions/js-pull-request-function@main
+
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
