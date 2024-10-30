@@ -37,6 +37,11 @@ jobs:
 
       - name: Look for PR
         uses: ikmdev/maven-unique-feature-branch-action/.github/actions/js-pull-request-function@master
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          repository: ${{github.repository}}
+          branch_name: ${{env.BRANCH_NAME}}
+
 
 
       - name: Checkout code
