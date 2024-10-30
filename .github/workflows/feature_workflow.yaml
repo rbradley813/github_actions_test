@@ -37,7 +37,7 @@ jobs:
           java-version: '21'
 
       - name: "[${{inputs.action}}] Feature Branch CI"
-        uses: ikmdev/maven-unique-feature-branch-action@main
+        uses: ikmdev/maven-unique-feature-branch-action@master
         with:
           action: ${{inputs.action}}
           original_branch_name: ${{inputs.branch_name}}
