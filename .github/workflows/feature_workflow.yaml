@@ -45,7 +45,10 @@ jobs:
 
       - name: Output from last step
         run: |
-          echo ${{steps.prLookup.outputs}}
+          echo ${{steps.prLookup.outputs.pr_url}}
+          echo ${{steps.prLookup.outputs.pr_exists}}
+          echo ${{steps.prLookup.outputs.pr_number}}
+          echo ${{steps.prLookup.outputs.pr_html_url}}
           exit 1
         
 
