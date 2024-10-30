@@ -46,10 +46,26 @@ jobs:
           echo Pull Request Number: ${{steps.prLookup.outputs.pr_number}}
           echo Pull Request HTML URL: ${{steps.prLookup.outputs.pr_html_url}}
 
+      - name: Validation Step
+        run: |
+         echo $ACTION
+         echo $PR_EXISTS
+         if [[ $ACTION === 'Start' && $PR_EXISTS === 'true' ]]; then
+            echo "PR for ${{env.BRANCH_NAME}} already exists - ${{steps.prLookup.outputs.pr_html_url}}"
+            exit 1;
+         elif [[ ($ACTION === 'Resume' || $ACTION === 'Finish')  && $PR_EXISTS === 'false' ]];
+            echo "PR does not exist for ${{env.BRANCH_NAME}}"
+            echo "Please create PR"
+            exit 1
+         fi
+        env:
+          ACTION: ${{inputs.action}}
+          PR_EXISTS: ${{steps.prLookup.outputs.pr_exists}}
+
       - name: Start -- Fail if PR Already Exists
         if : inputs.action == 'Start' && steps.prLookup.outputs.pr_exists == 'true'
         run: |
-          echo "PR for ${{env.BRANCH_NAME}} already exists - ${{steps.prLookup.outputs.pr_url}}"
+          echo "PR for ${{env.BRANCH_NAME}} already exists - ${{steps.prLookup.outputs.pr_html_url}}"
           exit 1
 
       - name: Resume/Finish - Fail if PR does not exist
