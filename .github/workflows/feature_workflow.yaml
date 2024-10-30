@@ -45,7 +45,7 @@ jobs:
 
       - name: Output from last step
         run: |
-          ${{fromJson(steps.prLookup.outputs)}}
+          echo ${{steps.prLookup.outputs}}
           exit 1
         
 
