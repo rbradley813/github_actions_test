@@ -42,7 +42,7 @@ jobs:
           action: ${{inputs.action}}
           original_branch_name: ${{inputs.branch_name}}
           feature_branch_name: ${{env.BRANCH_NAME}}
-          repository: ${{github.event.workflow.name}}
+          repository: ${{github.event.repository.name}}
           github_token: ${{secrets.GITHUB_TOKEN}}
   
         
