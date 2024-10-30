@@ -44,7 +44,9 @@ jobs:
           branch_name: ${{env.BRANCH_NAME}}
 
       - name: Output from last step
-        run: ${{fromJson(steps.prLookup.outputs)}}
+        run: |
+          ${{fromJson(steps.prLookup.outputs)}}
+          exit 1
         
 
 
