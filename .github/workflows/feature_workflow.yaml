@@ -36,11 +36,16 @@ jobs:
           echo "Set BRANCH_NAME to feature/${{ github.event.inputs.branch_name }}"
 
       - name: Look for PR
+        id: prLookup
         uses: ikmdev/maven-unique-feature-branch-action/.github/actions/js-pull-request-function@master
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           repository: ${{github.repository}}
           branch_name: ${{env.BRANCH_NAME}}
+
+      - name: Output from last step
+        run: ${{fromJson(steps.prLookup.outputs)}}
+        
 
 
 
