@@ -9,7 +9,7 @@ on:
         description: 'Enter the branch name without the "feature/" prefix'
         required: true
       action:
-        description: 'Choose an action: start, finish, or resume'
+        description: 'Choose an action: Start, Finish, or Resume'
         required: true
         type: choice
         options:
@@ -53,7 +53,7 @@ jobs:
          if [ $ACTION === 'Start' ] && [ $PR_EXISTS === 'true' ]; then
             echo "PR for ${{env.BRANCH_NAME}} already exists - ${{steps.prLookup.outputs.pr_html_url}}"
             exit 1
-         elif [ $ACTION === 'Resume' || $ACTION === 'Finish' ]  && [ $PR_EXISTS === 'false' ]
+         elif [ $ACTION === 'Resume' || $ACTION === 'Finish' ]  && [ $PR_EXISTS === 'false' ]; then
             echo "PR does not exist for ${{env.BRANCH_NAME}}"
             echo "Please create PR"
             exit 1
