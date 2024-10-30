@@ -24,7 +24,7 @@ env:
 
 jobs:
   start_job:
-    if: ${{ github.event.inputs.action == 'start' }}
+    if: ${{ github.event.inputs.action == 'Start' }}
     runs-on: ubuntu-24.04
 
     permissions:
