@@ -36,7 +36,7 @@ jobs:
         uses: ikmdev/maven-unique-feature-branch-action/.github/actions/js-pull-request-function@master
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          repository: ${{github.repository}}
+          repository: ikmdev/${{github.event.repository.name}}
           branch_name: ${{env.BRANCH_NAME}}
 
       - name: Output from last step
