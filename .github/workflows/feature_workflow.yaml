@@ -7,20 +7,20 @@ on:
     inputs:
       branch_name:
         description: 'Enter the branch name without the "feature/" prefix'
-        required: true
+        required: false
       action:
-        description: 'Choose an action: Start, Finish, or Resume'
+        description: 'Choose an action: Start or Finish'
         required: true
         type: choice
         options:
           - --Select--
           - Start
           - Finish
-          - Resume
         default: --Select--
 
 env:
   BRANCH_NAME: feature/${{inputs.branch_name}}
+  TRIGGER_BRANCH_NAME: ${{}}
 
 jobs:
   feature_branch_ci:
@@ -30,6 +30,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - run: |
+         echo ${{github.ref_name}}
+         exit 1
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
