@@ -41,6 +41,7 @@ jobs:
       - name: Get Input Name
         run: |
           echo "Input: ${{inputs.branch_name}}"
+          echo "Default: ${{github.event.repository.default_branch}}"
           echo "Ref: ${{github.ref_name}}"
           exit 1
 
