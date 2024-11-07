@@ -20,7 +20,7 @@ on:
 
 env:
   BRANCH_NAME: feature/${{inputs.branch_name}}
-  TRIGGER_BRANCH_NAME: ${{}}
+  # TRIGGER_BRANCH_NAME: ${{}}
 
 jobs:
   feature_branch_ci:
