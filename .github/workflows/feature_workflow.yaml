@@ -33,6 +33,7 @@ jobs:
       - name: Validate Branch Name Is Entered (Main/Master Branch)
         if: (${{github.ref_name}} == 'main' || ${{github.ref_name}} == 'master') && ${{inputs.branch_name}} == ''
         run: |
+          echo "${{github.ref_name}}"
           echo "Please enter Branch Name!"
           exit 1
 
