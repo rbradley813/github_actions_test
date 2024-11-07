@@ -19,9 +19,8 @@ on:
         default: --Select--
 
 env:
-  BRANCH_NAME: feature/${{inputs.branch_name}}
-  TRIGGER_BRANCH_NAME: ${{github.ref_name}}
-  
+  IS_DEFAULT_BRANCH: ${{github.ref_name == github.event.repository.default_branch}}
+
 
 jobs:
   feature_branch_ci:
@@ -31,21 +30,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Validate Branch Name Is Entered (Main/Master Branch)
-        if: github.ref_name == github.event.repository.default_branch && inputs.branch_name == ''
+      - name: Validate Branch Name Is Entered (Default Branch)
+        if: env.IS_DEFAULT_BRANCH && inputs.branch_name == ''
         run: |
-          echo "${{github.ref_name}}"
-          echo "Default: ${{github.event.repository.default_branch}}"
-          echo "Please enter Branch Name!"
+          echo "ERROR: When triggered on main/master branch please enter feature branch"
           exit 1
-
-      - name: Get Input Name
-        run: |
-          echo "Input: ${{inputs.branch_name}}"
-          echo "Default: ${{github.event.repository.default_branch}}"
-          echo "Ref: ${{github.ref_name}}"
-          exit 1
-
       
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -57,10 +46,9 @@ jobs:
         uses: ikmdev/maven-unique-feature-branch-action@master
         with:
           action: ${{inputs.action}}
-          original_branch_name: ${{inputs.branch_name}}
-          feature_branch_name: ${{env.BRANCH_NAME}}
-          trigger_branch_name: ${{env.TRIGGER_BRANCH_NAME}}
-          repository: ${{github.event.repository.name}}
+          custom_branch_name: ${{inputs.branch_name}}
+          trigger_branch_name: ${{github.ref_name}}
+          is_default_branch: ${{env.IS_DEFAULT_BRANCH}}
           github_token: ${{secrets.GITHUB_TOKEN}}
   
         
