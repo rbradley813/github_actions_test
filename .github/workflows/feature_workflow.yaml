@@ -30,6 +30,19 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Validate Branch Name Is Entered (Main/Master Branch)
+        if: (${{github.ref_name}} == 'main' || ${{github.ref_name}} == 'master') && ${{inputs.branch_name}} == ''
+        run: |
+          echo "Please enter Branch Name!"
+          exit 1
+
+      - name: Get Input Name
+        run: |
+          echo "Input: ${{inputs.branch_name}}"
+          echo "Ref: ${{github.ref_name}}"
+          exit 1
+
+      
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
