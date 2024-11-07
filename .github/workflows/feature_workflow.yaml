@@ -1,4 +1,4 @@
-name: Feature Branch Workflow (NO PR)
+name: Feature Branch Workflow
 
 run-name: ${{inputs.action}} -- feature/${{inputs.branch_name}}
 
