@@ -31,7 +31,7 @@ jobs:
       contents: write
     steps:
       - name: Validate Branch Name Is Entered (Default Branch)
-        if: env.IS_DEFAULT_BRANCH && inputs.branch_name == ''
+        if: env.IS_DEFAULT_BRANCH == 'true' && inputs.branch_name == ''
         run: |
           echo "ERROR: When triggered on main/master branch please enter feature branch"
           exit 1
