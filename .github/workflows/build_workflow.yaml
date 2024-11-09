@@ -4,9 +4,9 @@ run-name: 'Build Workflow -- ${{ github.head_ref || github.ref_name }}'
 
 # Pipeline/Workflow Triggers
 on:
-    push:
-    pull_request:
-    workflow_dispatch:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 env:
   BRANCH_NAME: ${{github.ref_name}}
@@ -19,9 +19,9 @@ jobs:
     steps:
       - uses: actions/setup-java@v4
         with:
-            java-version: '21'
-            distribution: 'zulu'
-          
+          java-version: '21'
+          distribution: 'zulu'
+
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v1
         with:
