@@ -1,6 +1,6 @@
 name: Feature Branch Workflow
 
-run-name: ${{inputs.action}} -- feature/${{inputs.branch_name}}
+run-name: ${{inputs.action}} -- ${{ github.ref_name == 'main' &&  'feature/${{inputs.branch_name}}' || '${{github.ref_name}}' }}
 
 on:
   workflow_dispatch:
