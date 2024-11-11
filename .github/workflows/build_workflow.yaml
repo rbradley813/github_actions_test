@@ -23,8 +23,7 @@ jobs:
             distribution: 'zulu'
           
       - name: Build IKMDEV Code
-        if: github.event.repository.name != 'github_actions_test'
-        uses: ikmdev/maven-clean-install-build-action@v1
+        uses: ikmdev/maven-clean-install-build-action@v1.1.0
         with:
           branch_name: ${{env.BRANCH_NAME}}
           sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
@@ -35,5 +34,3 @@ jobs:
           sonarcloud_coverage_jacoco_xmlReportPaths: ${{ 'target/site/jacoco/jacoco.xml' }}
           sonarcloud_java_binaries: ${{ 'target/classes' }}
           sonarcloud_tests: ${{ 'src/test/java' }}
-  
-  
