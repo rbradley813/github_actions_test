@@ -46,4 +46,3 @@ jobs:
           ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
           gpg_key: ${{secrets.GPG_KEY}}
           gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-          trunk_branch_name: ${{ env.TRUNK_BRANCH_NAME }}
