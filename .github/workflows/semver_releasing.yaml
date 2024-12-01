@@ -16,7 +16,7 @@ on:
           - minor
           - patch
       set_version:
-        description: 'Set version number explicitly (e.g., 1.2.3). Leave empty to increment.'
+        description: 'Set version number explicitly (e.g., 1.2.3-SNAPSHOT). Leave empty to increment.'
         required: false
 
 env:
