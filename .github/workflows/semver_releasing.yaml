@@ -42,7 +42,7 @@ jobs:
           exit 1
 
       - name: Shared Release Action
-        uses: ikmdev/maven-semver-release-action@test-version
+        uses: ikmdev/maven-semver-release-action@main
         with:
           version_type: ${{ github.event.inputs.version_type }}
           set_version: ${{ github.event.inputs.set_version }}
