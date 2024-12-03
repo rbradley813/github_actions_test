@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Verify Input
         run: |
-          if: [[ -z "${{ github.event.inputs.set_version }}" && "${{github.event.inputs.version_type }}" == "select" ]]; then
+          if: ${{ inputs.set_version == null && inputs.version_type == 'select' }}
             echo "ERROR: Please select a valid version type (major, minor, patch) or provide a set_version."
             exit 1
           fi
