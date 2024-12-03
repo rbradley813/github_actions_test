@@ -16,7 +16,7 @@ on:
           - minor
           - patch
       set_version:
-        description: 'Set version number explicitly (e.g., 1.2.3-SNAPSHOT). Leave empty to increment.'
+        description: 'Set next SNAPSHOT version number explicitly (e.g., 1.2.3-SNAPSHOT). Leave empty to increment.'
         required: false
 
 env:
@@ -32,7 +32,17 @@ jobs:
       - name: Verify Input
         run: |
           if [[ -z "${{ inputs.set_version }}" && "${{ inputs.version_type }}" == "select" ]]; then
-            echo "ERROR: Please select a valid version type (major, minor, patch) or provide a set_version."
+            echo "ERROR: Please select a valid version type (major, minor, patch) or provide a custom SNAPSHOT version."
+            exit 1
+          fi
+
+      - name: Verify Is SNAPSHOT Version
+        if: inputs.set_version != ''
+        run: |
+          if [[ "${{ inputs.set_version }}" =~ "-SNAPSHOT$" ]]; then
+            echo "The version is a snapshot version"
+          else
+            echo "ERROR: Please include the -SNAPSHOT suffix."
             exit 1
           fi
           
