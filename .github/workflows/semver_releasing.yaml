@@ -30,10 +30,11 @@ jobs:
     if: github.repository_owner == 'ikmdev'
     steps:
       - name: Verify Input
-        if: inputs.version_type == 'select'
         run: |
-          echo "ERROR: Please enter version type"
-          exit 1
+          if: [[ -z "${{ github.event.inputs.set_version }}" && "${{github.event.inputs.version_type }}" == "select" ]]; then
+            echo "ERROR: Please select a valid version type (major, minor, patch) or provide a set_version."
+            exit 1
+          fi
           
       - name: Verify Branch
         if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
