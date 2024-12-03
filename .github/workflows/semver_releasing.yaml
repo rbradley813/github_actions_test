@@ -39,7 +39,7 @@ jobs:
       - name: Verify Is SNAPSHOT Version
         if: inputs.set_version != ''
         run: |
-          if [[ "${{ inputs.set_version }}" =~ "-SNAPSHOT$" ]]; then
+          if inputs.set_version != '' && !contains(inputs.set_version, '-SNAPSHOT'); then
             echo "The version is a snapshot version"
           else
             echo "ERROR: Please include the -SNAPSHOT suffix."
