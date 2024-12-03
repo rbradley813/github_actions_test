@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Verify Input
         run: |
-          if: ${{ inputs.set_version == 'true' || inputs.version_type == 'select' }}
+          if [ -z "${{ inputs.set_version }}" ] || [[ "${{ inputs.version_type }}" == "select" ]]; then
             echo "ERROR: Please select a valid version type (major, minor, patch) or provide a set_version."
             exit 1
           fi
