@@ -35,10 +35,5 @@ jobs:
         uses: ikmdev/maven-semver-release-action@gitflow-plugin-test
         with:
           version_type: ${{ github.event.inputs.version_type }}
-          set_version: ${{ github.event.inputs.set_version }}
           ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           github_token: ${{secrets.GITHUB_TOKEN}}
-          ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
-          ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
-          gpg_key: ${{secrets.GPG_KEY}}
-          gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
