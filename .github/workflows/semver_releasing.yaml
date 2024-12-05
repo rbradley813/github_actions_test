@@ -8,7 +8,7 @@ on:
       version_type:
         description: 'Version type to increment'
         required: true
-        default: 'select'
+        default: 'minor'
         type: choice
         options:
           - select
