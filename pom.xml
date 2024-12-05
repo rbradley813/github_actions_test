@@ -256,7 +256,6 @@
                     <version>${maven.github-flow.version}</version>
                     <configuration>
                         <featureNamePattern>^(?!(((feature|hotfix|bugfix))\/(IKM|AR|IAT|IC|IKMC|IKDT|IKMD|IIA|IKMW|IKMM|TE)-\d+(-[0-9A-Za-z\-]*)*)|main|prod|master|dev).*$</featureNamePattern>
-                        <releaseVersion>FAIL-SNAPSHOT</releaseVersion>
                         <gitFlowConfig>
                             <developmentBranch>main</developmentBranch>
                             <productionBranch>main</productionBranch>
@@ -292,7 +291,10 @@
         </pluginManagement>
 
         <plugins>
-
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
