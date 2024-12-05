@@ -11,13 +11,9 @@ on:
         default: 'minor'
         type: choice
         options:
-          - select
           - major
           - minor
           - patch
-      set_version:
-        description: 'Set next SNAPSHOT version number explicitly (e.g., 1.2.3-SNAPSHOT). Leave empty to increment.'
-        required: false
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
