@@ -25,21 +25,6 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.repository_owner == 'ikmdev'
     steps:
-      - name: Verify Input
-        run: |
-          if [[ -z "${{ inputs.set_version }}" && "${{ inputs.version_type }}" == "select" ]]; then
-            echo "ERROR: Please select a valid version type (major, minor, patch) or provide a custom SNAPSHOT version."
-            exit 1
-          fi
-
-      - name: Verify Is SNAPSHOT Version
-        if: inputs.set_version != ''
-        run: |
-          if [[ -n "${{ inputs.set_version }}" && "${{ inputs.set_version }}" != *-SNAPSHOT ]]; then
-            echo "ERROR: Please include the -SNAPSHOT suffix."
-            exit 1
-          fi
-          
       - name: Verify Branch
         if: env.BRANCH_NAME != env.TRUNK_BRANCH_NAME
         run: |
