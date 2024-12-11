@@ -14,13 +14,15 @@ jobs:
   publish-artifacts:
       name: Publish Artifacts
       runs-on: ubuntu-24.04
-      if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
+      # if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
       steps:
       - uses: actions/setup-java@v4
         with:
                 java-version: '21'
                 distribution: 'zulu'
 
+      - name: test
+        run: echo "test"
 
       - name: Deploy Artifacts To Nexus
         uses: ikmdev/maven-nexus-deploy-action@v1.1.0
