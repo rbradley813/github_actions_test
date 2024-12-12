@@ -19,7 +19,7 @@ jobs:
       steps:
       - name: Read Release Notes
         id: release_notes
-        if: contains(github.ref_type, 'tag'
+        if: contains(github.ref_type, 'tag')
         run:  echo "RELEASE_NOTES=$(ls .doc/release_notes.md)" >> $GITHUB_OUTPUT
         
       - name: Post Build Action
