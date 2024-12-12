@@ -1,0 +1,41 @@
+name: Publish Artifacts Workflow
+
+run-name: 'Publish Artifacts To Nexus -- ${{github.event.workflow_run.head_branch}}'
+
+on:
+   workflow_run:
+    workflows:
+      - Build Workflow
+    types:
+      - completed
+
+        
+        
+jobs:
+  post-build:
+      name: Publish Build Actions
+      runs-on: ubuntu-24.04
+      if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
+      steps:
+      - name: Read Release Notes
+        id: release_notes
+        if: contains(github.ref_type, 'tag'
+        run:  echo "RELEASE_NOTES=$(ls .doc/release_notes.md)" >> $GITHUB_OUTPUT
+      - name: Post Build Action
+        uses: ikmdev/maven-post-release-action@poc-testing
+        with:
+            nexus_repo_id: ${{ contains(github.ref_type, 'tag') && "maven-releases" || "maven-snapshots" }}
+            nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
+            repo_name: ${{github.event.workflow_run.head_repository.full_name}}
+            branch_name: ${{github.event.workflow_run.head_branch}}
+            is_tag: ${{contains(github.ref_type, 'tag')}}
+            ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+            github_token: ${{secrets.GITHUB_TOKEN}}
+            ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
+            ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
+            gpg_key: ${{secrets.GPG_KEY}}
+            gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
+            release_notes: ${{steps.release_notes.outputs.RELEASE_NOTES}}
+            
+            
+            
