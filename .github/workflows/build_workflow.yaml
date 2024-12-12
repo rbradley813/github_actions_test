@@ -7,6 +7,10 @@ on:
     push:
     pull_request:
     workflow_dispatch:
+        inputs:
+         test:
+             type: string
+             description: Test
 
 env:
   BRANCH_NAME: ${{github.ref_name}}
