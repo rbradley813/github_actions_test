@@ -23,11 +23,8 @@ jobs:
       - name: Read Release Notes
         id: release_notes
         run:  |
-           MESSAGE=$(cat << EOF
-           $(cat release_notes.md)
-          EOF
-          )
-          echo RELEASE_NOTES=$MESSAGE >> $GITHUB_OUTPUT
+           MESSAGE=$(cat << release_notes.md)
+           echo RELEASE_NOTES=$MESSAGE >> $GITHUB_OUTPUT
 
       - name: Get Repo ID
         id:  nexus_repo_id
