@@ -19,9 +19,9 @@ jobs:
       steps:
       - name: Read Release Notes
         id: release_notes
-        run:  echo "RELEASE_NOTES=$(cat .doc/release_notes.md)" >> $GITHUB_OUTPUT
+        run:  echo "RELEASE_NOTES=$(cat release_notes.md)" >> $GITHUB_OUTPUT
 
-      - name: Read Release Notes
+      - name: Get Repo ID
         id:  nexus_repo_id
         if: contains(github.ref_type, 'tag')
         run:  echo "NEXUS_REPO_ID=maven_releases" >> $GITHUB_OUTPUT
