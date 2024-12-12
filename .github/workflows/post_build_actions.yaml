@@ -30,7 +30,7 @@ jobs:
       - name: Post Build Action
         uses: ikmdev/maven-post-release-action@poc-testing
         with:
-            nexus_repo_id: ${{ steps.nexus_repo_id.outputs.NEXUS_REPO_ID }}
+            nexus_repo_id: "maven-releases"
             nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
             repo_name: ${{github.event.workflow_run.head_repository.full_name}}
             branch_name: ${{github.event.workflow_run.head_branch}}
