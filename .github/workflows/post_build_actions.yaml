@@ -34,7 +34,7 @@ jobs:
             nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
             repo_name: ${{github.event.workflow_run.head_repository.full_name}}
             branch_name: ${{github.event.workflow_run.head_branch}}
-            is_tag: ${{contains(github.ref_type, 'tag')}}
+            is_tag: 'true'
             ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
             github_token: ${{secrets.GITHUB_TOKEN}}
             ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
