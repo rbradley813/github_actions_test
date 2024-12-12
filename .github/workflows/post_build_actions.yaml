@@ -13,12 +13,12 @@ on:
         
 jobs:
   post-build:
-      name: Post Build Actions
-      runs-on: ubuntu-24.04
-      if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
-      outputs:
-        RELEASE_UPLOAD_URL: ${{steps.ikmdev_post_build.outputs.release_upload_url}}
-      steps:      
+    name: Post Build Actions
+    runs-on: ubuntu-24.04
+    if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
+    outputs:
+       RELEASE_UPLOAD_URL: ${{steps.ikmdev_post_build.outputs.release_upload_url}}
+    steps:      
       - name: Get Nexus Repo ID
         id:  nexus_repo_id
         run:  |
@@ -48,4 +48,4 @@ jobs:
             ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
             gpg_key: ${{secrets.GPG_KEY}}
             gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-            release_notes: "Release ${{github.ref_name}}
+            release_notes: "Release ${{github.ref_name}}"
