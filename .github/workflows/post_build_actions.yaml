@@ -23,8 +23,7 @@ jobs:
       - name: Read Release Notes
         id: release_notes
         run:  |
-           MESSAGE=$(cat << release_notes.md)
-           echo RELEASE_NOTES=$MESSAGE >> $GITHUB_OUTPUT
+           echo RELEASE_NOTES=$(cat text_release_notes.txt) >> $GITHUB_OUTPUT
 
       - name: Get Repo ID
         id:  nexus_repo_id
