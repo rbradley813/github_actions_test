@@ -6,6 +6,10 @@ run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}
 on:
   workflow_dispatch:
     inputs:
+      set_version:
+        type: string
+        description: "(Optional) Custom Release Version"
+        required: false
       version_type:
         description: 'Development version type to increment'
         required: true
@@ -15,10 +19,6 @@ on:
           - major
           - minor
           - patch
-      set_version:
-        type: string
-        description: "(Optional) Custom Release Version"
-        required: false
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
