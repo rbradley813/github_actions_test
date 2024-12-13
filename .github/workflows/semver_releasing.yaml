@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version_type:
-        description: 'Version type to increment'
+        description: 'Development version type to increment'
         required: true
         default: 'minor'
         type: choice
@@ -15,6 +15,10 @@ on:
           - major
           - minor
           - patch
+      set_version:
+        type: string
+        description: "(Optional) Custom Release Version"
+        required: false
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
@@ -38,3 +42,4 @@ jobs:
           version_type: ${{ github.event.inputs.version_type }}
           ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           github_token: ${{secrets.GITHUB_TOKEN}}
+          set_version: ${{ github.event.inputs.set_version }}
