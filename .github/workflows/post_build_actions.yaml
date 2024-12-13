@@ -18,7 +18,11 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
     outputs:
        RELEASE_UPLOAD_URL: ${{steps.ikmdev_post_build.outputs.release_upload_url}}
-    steps:      
+    steps:   
+      - name: Check if tag
+        run: |
+         echo "TAG: ${{contains(github.ref_type, 'tag')}} "
+      
       - name: Get Nexus Repo ID
         id:  nexus_repo_id
         run:  |
