@@ -21,7 +21,7 @@ jobs:
     steps:   
       - name: Check if tag
         run: |
-         echo "${{toJson(github.context)}} "
+         echo "${{toJson(github)}} "
          exit 1
       
       - name: Get Nexus Repo ID
