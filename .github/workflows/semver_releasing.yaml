@@ -6,7 +6,7 @@ run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}
 on:
   workflow_dispatch:
     inputs:
-      set_version:
+      release_version:
         type: string
         description: "(Optional) Custom Release Version"
         required: false
@@ -42,4 +42,4 @@ jobs:
           version_type: ${{ github.event.inputs.version_type }}
           ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           github_token: ${{secrets.GITHUB_TOKEN}}
-          set_version: ${{ github.event.inputs.set_version }}
+          release_version: ${{ github.event.inputs.release_version }}
