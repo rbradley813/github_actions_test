@@ -32,6 +32,8 @@ jobs:
       - name: Extract Target Version
         id: get_target_version
         run: |
+          ./mvnw -v
+          java --version
           echo "TARGET_POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT 
 
       - name: Checkout Repository
