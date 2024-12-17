@@ -26,7 +26,6 @@ jobs:
             distribution: 'zulu'
           
       - name: Build IKMDEV Code
-        if: github.event.repository.name != 'github_actions_test'
         uses: ikmdev/maven-clean-install-build-action@testing-build
         with:
           branch_name: ${{env.BRANCH_NAME}}
