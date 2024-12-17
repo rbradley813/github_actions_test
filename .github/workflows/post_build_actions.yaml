@@ -23,7 +23,7 @@ jobs:
           repository: ${{github.event.workflow_run.head_repository.full_name}}
           ref: ${{github.event.workflow_run.head_branch}}
           
-      - name: Post Build Action
+      - name: IKMDEV Post Build Action
         id: ikmdev_post_build
         uses: ikmdev/maven-post-release-action@poc-testing
         with:
