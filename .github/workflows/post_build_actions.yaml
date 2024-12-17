@@ -16,17 +16,19 @@ jobs:
     name: Post Build Actions
     runs-on: ubuntu-24.04
     if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
-    outputs:
-       RELEASE_UPLOAD_URL: ${{steps.ikmdev_post_build.outputs.release_upload_url}}
-    steps:   
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{github.event.workflow_run.head_repository.full_name}}
+          ref: ${{github.event.workflow_run.head_branch}}
+          
       - name: Post Build Action
         id: ikmdev_post_build
         uses: ikmdev/maven-post-release-action@poc-testing
         with:
             nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
-            repo_name: ${{github.event.workflow_run.head_repository.full_name}}
             branch_name: ${{github.event.workflow_run.head_branch}}
-            ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
             github_token: ${{secrets.GITHUB_TOKEN}}
             ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
             ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
