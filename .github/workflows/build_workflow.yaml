@@ -13,9 +13,45 @@ env:
   IS_TAG: ${{ github.ref_type == 'tag'}}
 
 jobs:
+  pr-verification:
+    name: Pull Request Verification
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ikmdev/${{github.event.repository.name}}
+          ref: ${{ github.event.repository.default_branch }}
+
+      - uses: actions/setup-java@v4
+        with:
+            java-version: '21'
+            distribution: 'zulu'
+
+      - name: Extract Target Version
+        id: get_target_version
+        run: |
+          echo "TARGET_POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT 
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Source Version
+        id: get_source_version
+        run: |
+          echo "SOURCE_POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT 
+
+      - name: Validate Version
+        if: steps.get_target_version.outputs.TARGET_POM_VERSION != steps.get_target_version.outputs.SOURCE_POM_VERSION
+        run: |
+         echo "::error::Source Version: ${{steps.get_source_version.outputs.SOURCE_POM_VERSION}} Does Not Match Target Version: ${{steps.get_target_version.outputs.TARGET_POM_VERSION}}"
+         exit 1
+        
   build-job:
     name: Build Job
     runs-on: ubuntu-24.04
+    needs: pr-verification
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
