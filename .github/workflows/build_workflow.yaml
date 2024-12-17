@@ -24,10 +24,10 @@ jobs:
           repository: ikmdev/${{github.event.repository.name}}
           ref: ${{ github.event.repository.default_branch }}
 
-      - uses: actions/setup-java@v4
-        with:
-            java-version: '21'
-            distribution: 'zulu'
+      # - uses: actions/setup-java@v4
+      #   with:
+      #       java-version: '21'
+      #       distribution: 'zulu'
 
       - name: Extract Target Version
         id: get_target_version
