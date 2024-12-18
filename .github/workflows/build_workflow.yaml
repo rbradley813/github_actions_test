@@ -13,14 +13,19 @@ env:
   IS_TAG: ${{ github.ref_type == 'tag'}}
 
 jobs:
-  build-job:
-    name: Build Job
+  pr-verification:
+    name: Pull Request Validation
     runs-on: ubuntu-24.04
+    if: github.event_name == 'pull_request'
     steps:
       - name: Pull Request Version Validation
         if: github.event_name == 'pull_request'
         uses: ikmdev/maven-pull-request-version-validation-action@main
         
+  build-job:
+    name: Build Job
+    runs-on: ubuntu-24.04
+    steps:      
       - name: Checkout Repository
         uses: actions/checkout@v4
       
