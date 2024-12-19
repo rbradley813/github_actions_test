@@ -1,12 +1,6 @@
 # GitHub Test Release Notes
 
-## Changes since Release 1.27.0
+## Changes since Release 1.28.0
 
-* Reasoner Modules moved to tinkar-core from Komet
-* Time-based & Tag-based Change Set Export functionality with Manifest summary
-* Timestamps handled in Protobuf as Epoch milliseconds instead of Protobuf Timestamp Object
-* UUIDs handled in Protobuf as regular Strings instead of ByteStrings
-* Fixes Owl Syntax transformation of dataHasValue and subDataPropertyOf keywords
-* Introduced functionality for specifying author, module, and path for transformed Owl syntax semantics
-* Export/Import round-trip integration tests verifying the integrity of transformed data
-* Bug fixes and performance improvements
+*test
+
