@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.ikm.build</groupId>
     <artifactId>gitub_actions_test_parent</artifactId>
-    <version>12.10.0-SNAPSHOT</version>
+    <version>1.0.99</version>
     <name>General Build Parent Test</name>
     <description>
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
