@@ -6,6 +6,11 @@ run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}
 on:
   workflow_dispatch:
     inputs:
+      link:
+        type: string
+        description: https://central.sonatype.com/artifact/dev.ikm.tinkar/tinkar-core/versions
+        required: false
+        default: 'https://central.sonatype.com/artifact/dev.ikm.tinkar/tinkar-core/versions'
       release_version:
         type: string
         description: "(Optional) Custom Release Version"
