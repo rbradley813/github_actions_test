@@ -1,4 +1,4 @@
-name: SemVer Release Workflow
+name: "SemVer Release Workflow\nTesting"
 
 run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
