@@ -8,7 +8,7 @@ on:
     inputs:
       link:
         type: string
-        description: <a href='https://central.sonatype.com/artifact/dev.ikm.tinkar/tinkar-core/versions'>Link</a>
+        description: "Enter Tinkar Starter Data Properties Version (View Versions Here: https://central.sonatype.com/artifact/dev.ikm.tinkar/tinkar-core/versions)"
         required: false
         default: 'https://central.sonatype.com/artifact/dev.ikm.tinkar/tinkar-core/versions'
       release_version:
