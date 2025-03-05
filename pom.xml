@@ -88,7 +88,7 @@
         <maven.sonarqube.version>3.9.1.2184</maven.sonarqube.version>
         <maven.github-flow.version>1.21.1-r4</maven.github-flow.version>
 
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
@@ -857,8 +857,7 @@
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <stagingProfileId>4b1399ab6b73fe</stagingProfileId>
-                            <stagingRepositoryId>devikm-1886</stagingRepositoryId>
+                            <stagingRepositoryId>devikm-1888</stagingRepositoryId>
                         </configuration>
                     </plugin>
 
