@@ -857,6 +857,7 @@
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <stagingProfileId>4b1399ab6b73fe</stagingProfileId>
                             <stagingRepositoryId>devikm-uyi-test-1</stagingRepositoryId>
                         </configuration>
                     </plugin>
