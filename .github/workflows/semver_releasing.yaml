@@ -55,7 +55,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          repository: ikmdev/demo-java-maven
+          repository: ikmdev/komet_test
           token: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
 
       - name: Update File With Latest TAG
