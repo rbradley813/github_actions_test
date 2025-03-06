@@ -26,7 +26,7 @@ jobs:
           git config user.email 'devops@ikm.dev'
           cd .github/workflows
           git pull -p;
-          sed -i '/-- SELECT --/a\          - ${{ github.ref_name }}' generate-pipeline-test.yaml
+          yq -i 'on.workflow_dispatch.inputs.version_type.options += "${{ github.ref_name }}"' generate-pipeline-test.yaml
           git commit -am"Updated Tag"
           git push
           
