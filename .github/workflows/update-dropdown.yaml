@@ -24,9 +24,8 @@ jobs:
         run: |
           git config user.name "ikmdevops"
           git config user.email 'devops@ikm.dev'
-          cd .github/workflows
           git pull -p;
-          yq -i 'on.workflow_dispatch.inputs.version_type.options += "${{ github.ref_name }}"' generate-pipeline-test.yaml
+          yq -i '.on.workflow_dispatch.inputs.tag_name.options += "${{ github.ref_name }}"' .github/workflows/generate-pipeline-test.yaml
           git commit -am"Updated Tag"
           git push
           
