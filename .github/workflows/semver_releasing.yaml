@@ -47,3 +47,19 @@ jobs:
           version_type: ${{ github.event.inputs.version_type }}
           github_token: ${{secrets.GITHUB_TOKEN}}
           release_version: ${{ github.event.inputs.release_version }}
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ikmdev/demo-java-maven
+          token: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+
+      - name: Update File With Latest TAG
+        run: |
+          cd .github/workflows
+          git pull -p;
+          LATEST-TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          sed -i '/-- SELECT --/a\          - $LATEST-TAG' generate-pipeline-test.yaml
+          git commit -am"Updated Tag"
+          git push
+          
