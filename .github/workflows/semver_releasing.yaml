@@ -68,6 +68,6 @@ jobs:
           git commit -am"Updated Generate Data Pipeline With $TAG"
           git push
         env:
-          LATEST-TAG: ${{steps.latest_tag.outputs.TAG}}
+          TAG: ${{steps.latest_tag.outputs.TAG}}
       
           
