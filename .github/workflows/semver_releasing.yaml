@@ -64,7 +64,7 @@ jobs:
           git config user.name "ikmdevops"
           git config user.email 'devops@ikm.dev'
           git pull -p;
-          yq -i '.on.workflow_dispatch.inputs.tag_name.options = ["$TAG"] + .on.workflow_dispatch.inputs.tag_name.options' .github/workflows/generate-pipeline-test.yaml
+          yq -i '.on.workflow_dispatch.inputs.tag_name.options = [$TAG] + .on.workflow_dispatch.inputs.tag_name.options' .github/workflows/generate-pipeline-test.yaml
           git commit -am"Updated Generate Data Pipeline With $TAG"
           git push
         env:
