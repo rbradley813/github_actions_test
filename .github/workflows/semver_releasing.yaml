@@ -50,7 +50,7 @@ jobs:
 
       - name: Latest Tag
         id: latest_tag
-        run:  echo "LATEST-TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+        run:  echo "TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
 
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -60,14 +60,14 @@ jobs:
 
       - name: Update Dropdowns
         run: |
-          echo $LATEST-TAG
+          echo $TAG
           git config user.name "ikmdevops"
           git config user.email 'devops@ikm.dev'
           git pull -p;
-          yq -i '.on.workflow_dispatch.inputs.tag_name.options = ["$LATEST-TAG"] + .on.workflow_dispatch.inputs.tag_name.options' .github/workflows/generate-pipeline-test.yaml
-          git commit -am"Updated Generate Data Pipeline With $LATEST-TAG"
+          yq -i '.on.workflow_dispatch.inputs.tag_name.options = ["$TAG"] + .on.workflow_dispatch.inputs.tag_name.options' .github/workflows/generate-pipeline-test.yaml
+          git commit -am"Updated Generate Data Pipeline With $TAG"
           git push
         env:
-          LATEST-TAG: ${{steps.latest_tag.outputs.LATEST-TAG}}
+          LATEST-TAG: ${{steps.latest_tag.outputs.TAG}}
       
           
