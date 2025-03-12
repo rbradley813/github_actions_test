@@ -50,7 +50,7 @@ jobs:
 
       - name: Latest Tag
         id: latest_tag
-        run:  echo LATEST-TAG=$(git describe --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_OUTPUT
+        run:  echo "LATEST-TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
 
       - name: Checkout Repo
         uses: actions/checkout@v4
