@@ -37,3 +37,20 @@ jobs:
             gpg_key: ${{secrets.GPG_KEY}}
             gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
             sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+
+  repository-dispatch:
+       name: Repository Dispatch
+       needs: post-build
+      #  if: needs.post-build.outputs.IS_TAG == 'true'
+       runs-on: ubuntu-24.04
+       strategy:
+        matrix:
+          repos: [data-properties-test]
+       steps:
+        - name: Trigger Repository Dispatch
+          run: |
+            curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
+            https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
+            -d '{"event_type":"custom-event","client_payload":{"version":"Uyi Test -- ${{github.event.workflow_run.head_branch}}"}}'
