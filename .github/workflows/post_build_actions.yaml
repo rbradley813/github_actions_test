@@ -40,7 +40,7 @@ jobs:
 
   repository-dispatch:
        name: Repository Dispatch
-       needs: post-build
+      #  needs: post-build
       #  if: needs.post-build.outputs.IS_TAG == 'true'
        runs-on: ubuntu-24.04
        strategy:
