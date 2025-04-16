@@ -53,4 +53,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
             https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
-            -d '{"event_type":"tinkar-trigger","client_payload":{"version":"1.1.0"}}'
+            -d '{"event_type":"tinkar-trigger","client_payload":{"version":"1.1.1"}}'
