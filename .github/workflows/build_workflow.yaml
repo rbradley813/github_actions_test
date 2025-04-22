@@ -38,7 +38,7 @@ jobs:
         run: echo ${{vars.TEST_PROPERTY}}
 
       - name: Update GH Variable
-        run: gh variable set TEST_PROPERTY
+        run: gh variable set TEST_PROPERTY --body "Jackie Chan Adventures"
         env:
             GH_TOKEN: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
           
