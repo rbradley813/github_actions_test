@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
     steps:
+      - name: Print GitHub Context
+        run: echo "$GITHUB_CONTEXT"
+        env:
+           GITHUB_CONTEXT: ${{toJson(github)}}
+        
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
