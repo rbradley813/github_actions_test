@@ -24,7 +24,12 @@ jobs:
   build-job:
     name: Build Job
     runs-on: ubuntu-24.04
-    steps:      
+    steps: 
+      - name: Print GitHub Context
+        run: echo "$GITHUB_CONTEXT"
+        env:
+           GITHUB_CONTEXT: ${{toJson(github)}}
+           
       - name: Checkout Repository
         uses: actions/checkout@v4
 
