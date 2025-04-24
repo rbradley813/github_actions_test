@@ -38,6 +38,12 @@ jobs:
         run: gh variable set TINKAR_EXAMPLE_DATA_PROPERTIES_VERSION --body "${{github.event.client_payload.version}}"
         env:
             GH_TOKEN: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+
+      - name: Jar Test
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jar Report
+          path: target/*jar
           
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v3.3.0
