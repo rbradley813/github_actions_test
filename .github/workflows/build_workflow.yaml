@@ -35,18 +35,20 @@ jobs:
 
       - name: Update tinkar-example-data-properties version
         if: github.event_name == 'repository_dispatch'
-        run: gh variable set TINKAR_EXAMPLE_DATA_PROPERTIES_VERSION --body "${{github.event.client_payload.version}}"
+        run: echo $PAYLOAD_VERSION > PAYLOAD_VERSION.txt
         env:
             GH_TOKEN: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+            PAYLOAD_VERSION: ${{github.event.client_payload.version}}
           
       - name: Build IKMDEV Code
         uses: ikmdev/maven-clean-install-build-action@v3.3.0
         with:
           branch_name: ${{github.ref_name}}
-          mvn_additional_args: -Dtinkar-example-data-properties.version=${{ github.event_name == 'repository_dispatch' && vars.TINKAR_EXAMPLE_DATA_PROPERTIES_VERSION || '1.1.1' }}
+          mvn_additional_args: -Dtinkar-example-data-properties.version=${{ github.event_name == 'repository_dispatch' && ${{github.event.client_payload.version}} || '1.1.1' }}
 
-      - name: Jar Test
+      - name: Text Test
+        if: github.event_name == 'repository_dispatch'
         uses: actions/upload-artifact@v4
         with:
-          name: Jar Report
-          path: pom.xml
+          name: ${{github.event.client_payload.version}}
+          path:  PAYLOAD_VERSION.txt
