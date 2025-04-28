@@ -28,13 +28,14 @@ jobs:
       - name: Print GitHub Context
         run: |
           echo "$GITHUB_CONTEXT"
-          echo "1.1.1" > PAYLOAD_VERSION.txt
-
         env:
            GITHUB_CONTEXT: ${{toJson(github)}}
            
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Make Test Text File
+        run: echo "1.1.1" > PAYLOAD_VERSION.txt
 
       - name: Update tinkar-example-data-properties version
         if: github.event_name == 'repository_dispatch'
