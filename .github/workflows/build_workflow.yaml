@@ -26,7 +26,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps: 
       - name: Print GitHub Context
-        run: echo "$GITHUB_CONTEXT"
+        run: |
+          echo "$GITHUB_CONTEXT"
+          echo "1.1.1" > PAYLOAD_VERSION.txt
+
         env:
            GITHUB_CONTEXT: ${{toJson(github)}}
            
@@ -47,8 +50,9 @@ jobs:
           mvn_additional_args: -Dtinkar-example-data-properties.version=${{ github.event_name == 'repository_dispatch' && github.event.client_payload.version || '1.1.1' }}
 
       - name: Text Test
-        if: github.event_name == 'repository_dispatch'
+        # if: github.event_name == 'repository_dispatch'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{github.event.client_payload.version}}
+          # name: ${{github.event.client_payload.version}}
+          name: 1.1.1
           path:  PAYLOAD_VERSION.txt
