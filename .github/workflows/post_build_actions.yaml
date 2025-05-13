@@ -55,4 +55,4 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
           https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
-          -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{env.BRANCH_NAME}}", "origin_repo": "${{ github.event.repository.name }}"}}'
+          -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{github.event.workflow_run.head_branch}}", "origin_repo": "${{ github.event.repository.name }}"}}'
