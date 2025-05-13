@@ -18,31 +18,39 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
     steps:
-      - name: Print GitHub Context
-        run: echo "$GITHUB_CONTEXT"
-        env:
-           GITHUB_CONTEXT: ${{toJson(github)}}
-        
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           repository: ${{github.event.workflow_run.head_repository.full_name}}
           ref: ${{github.event.workflow_run.head_branch}}
           fetch-depth: 0
-
-      - name: Print Before GH Variable Test
-        run: echo ${{vars.TEST_PROPERTY}}
           
-      - name: IKMDEV Post Build Action
-        id: ikmdev_post_build
-        uses: ikmdev/maven-post-build-action@main
-        with:
-            nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
-            branch_name: ${{github.event.workflow_run.head_branch}}
-            github_token: ${{secrets.GITHUB_TOKEN}}
-            ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
-            ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
-            gpg_key: ${{secrets.GPG_KEY}}
-            gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-            sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
-            mvn_additional_args: '-Dtinkar-example-data-properties.version=${{vars.TINKAR_EXAMPLE_DATA_PROPERTIES_VERSION}}'
+      # - name: IKMDEV Post Build Action
+      #   id: ikmdev_post_build
+      #   uses: ikmdev/maven-post-build-action@main
+      #   with:
+      #       nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
+      #       branch_name: ${{github.event.workflow_run.head_branch}}
+      #       github_token: ${{secrets.GITHUB_TOKEN}}
+      #       ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
+      #       ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
+      #       gpg_key: ${{secrets.GPG_KEY}}
+      #       gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
+      #       sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
+
+  repository-dispatch:
+    name: Update Data Properties
+    needs: post-build
+    if: needs.post-build.outputs.IS_TAG == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        repos: [tinkar-example-data-test]
+    steps:
+      - name: Trigger Repository Dispatch
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
+          https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
+          -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{env.BRANCH_NAME}}", "origin_repo": "${{ github.event.repository.name }}"}}'
