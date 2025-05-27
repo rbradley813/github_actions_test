@@ -6,7 +6,7 @@ on:
  workflow_dispatch:
 
 env:
-  NEXUS_REPO_ID: "maven-snapshots"
+  NEXUS_REPO_ID: "maven-releases"
   NEXUS_USERNAME: "admin"
   NEXUS_PASSWORD: ${{secrets.EC2_NEXUS_PASSWORD}}
   NEXUS_PROFILE: "Ze-Profile"
