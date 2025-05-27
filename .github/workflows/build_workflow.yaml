@@ -27,9 +27,7 @@ jobs:
     steps: 
       - name: Print GitHub Context
         run: |
-          echo "$GITHUB_CONTEXT"
-        env:
-           GITHUB_CONTEXT: ${{toJson(github)}}
+           apk update
            
       - name: Checkout Repository
         uses: actions/checkout@v4
