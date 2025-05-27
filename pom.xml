@@ -115,6 +115,12 @@
         </dependencyManagement>
 
     <build>
+        <dependencies>
+            <dependency>
+                    <artifactId>dev.ikm.tinkar</artifactId>
+                    <groupId>tinkar-core</groupId>
+                </dependency>
+        </dependencies>
         <pluginManagement>
             <plugins>
 
