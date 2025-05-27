@@ -76,22 +76,21 @@
                 <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependencies>
+            
                 <dependency>
                      <groupId>dev.ikm.tinkar</groupId>
                      <artifactId>composer</artifactId>
                     <version>${tinkar-core-snapshot.version}</version>
                 </dependency>
-            </dependencies>
         </dependencies>
     </dependencyManagement>
 
-      <!-- <dependencies>
+      <dependencies>
             <dependency>
                     <groupId>dev.ikm.tinkar</groupId>
                      <artifactId>composer</artifactId>
                 </dependency>
-        </dependencies> -->
+        </dependencies>
 
     <build>
         <pluginManagement>
