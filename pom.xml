@@ -114,13 +114,14 @@
             </dependencies>
         </dependencyManagement>
 
-    <build>
-        <dependencies>
+         <dependencies>
             <dependency>
                     <artifactId>dev.ikm.tinkar</artifactId>
                     <groupId>tinkar-core</groupId>
                 </dependency>
         </dependencies>
+
+    <build>
         <pluginManagement>
             <plugins>
 
