@@ -51,7 +51,7 @@
         <maven.mycila.version>2.2.0</maven.mycila.version>
         <junit.version>5.10.0</junit.version>
         <slf4j.version>2.0.13</slf4j.version>
-        <tinkar-core-snapshot.version>1.98.0</tinkar-core-snapshot.version>
+        <tinkar-core-snapshot.version>1.98.12</tinkar-core-snapshot.version>
 
         <eclipse-plugin.version>1.0.0</eclipse-plugin.version>
     </properties>
@@ -86,12 +86,12 @@
         </dependencies>
     </dependencyManagement>
 
-      <dependencies>
+      <!-- <dependencies>
             <dependency>
                     <groupId>dev.ikm.tinkar</groupId>
                      <artifactId>composer</artifactId>
                 </dependency>
-        </dependencies>
+        </dependencies> -->
 
     <build>
         <pluginManagement>
