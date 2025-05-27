@@ -108,7 +108,7 @@
             <dependencies>
                 <dependency>
                      <groupId>dev.ikm.tinkar</groupId>
-                    <artifactId>tinkar-core</artifactId>
+                     <artifactId>composer</artifactId>
                     <version>${tinkar-core-snapshot.version}</version>
                 </dependency>
             </dependencies>
@@ -117,7 +117,7 @@
         <dependencies>
             <dependency>
                     <groupId>dev.ikm.tinkar</groupId>
-                    <artifactId>tinkar-core</artifactId>
+                     <artifactId>composer</artifactId>
                 </dependency>
         </dependencies>
 
