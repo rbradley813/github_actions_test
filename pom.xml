@@ -103,6 +103,11 @@
         <module>java-parent</module>
     </modules>
 
+
+    
+
+    <build>
+    <dependencyManagement>
     <dependencies>
         <dependency>
             <artifactId>dev.ikm.tinkar</artifactId>
@@ -110,8 +115,7 @@
             <version>${tinkar-core-snapshot.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
+</dependencyManagement>
         <pluginManagement>
             <plugins>
 
