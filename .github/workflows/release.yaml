@@ -1,4 +1,5 @@
-name: "SemVer Release Workflow"
+
+name: SemVer Release Workflow
 
 run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}"
 
@@ -42,35 +43,8 @@ jobs:
           token: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
 
       - name: Shared Release Action
-        uses: ikmdev/maven-semver-release-action@gitflow-plugin-test
+        uses: ikmdev/maven-semver-release-action@v2
         with:
           version_type: ${{ github.event.inputs.version_type }}
           github_token: ${{secrets.GITHUB_TOKEN}}
           release_version: ${{ github.event.inputs.release_version }}
-
-      # - name: Latest Tag
-      #   id: latest_tag
-      #   run:  echo "TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          repository: ikmdev/komet_test
-          token: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
-
-      # - name: Update Dropdown
-      #   run: |
-      #     git config user.name "ikmdevops"
-      #     git config user.email 'devops@ikm.dev'
-      #     git pull -p
-      #     echo "Adding $LATEST_TAG tag to the property version choice dropdown for users attempting to generate data"
-      #     yq -i ".on.workflow_dispatch.inputs.properties_version.options = [\"$LATEST_TAG\"] + .on.workflow_dispatch.inputs.properties_version.options" .github/workflows/generate-pipeline-test.yaml
-      #     git diff -U1 | grep -E "\-\-\-|\- $LATEST_TAG" -B2 -A1 | grep -v "^--$" > add_property_version_choice.patch
-      #     git restore .
-      #     git apply add_property_version_choice.patch
-      #     git commit -am"Updated Generate Data Pipeline With $LATEST_TAG"
-      #     git push
-      #   env:
-      #     LATEST_TAG: ${{steps.latest_tag.outputs.LATEST_TAG}}
-      
-          

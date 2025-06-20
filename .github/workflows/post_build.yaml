@@ -17,8 +17,6 @@ jobs:
     name: Post Build Actions
     runs-on: ubuntu-24.04
     if: github.event.workflow_run.conclusion == 'success' && github.repository_owner == 'ikmdev'
-    outputs:
-       IS_TAG: ${{steps.ikmdev_post_build.outputs.is_tag}}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -29,7 +27,7 @@ jobs:
           
       - name: IKMDEV Post Build Action
         id: ikmdev_post_build
-        uses: ikmdev/maven-post-build-action@tinkar-starter-testing
+        uses: ikmdev/maven-post-build-action@v2
         with:
             nexus_repo_password: ${{secrets.EC2_NEXUS_PASSWORD}}
             branch_name: ${{github.event.workflow_run.head_branch}}
@@ -39,20 +37,4 @@ jobs:
             gpg_key: ${{secrets.GPG_KEY}}
             gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
             sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
-
-  repository-dispatch:
-    name: Update Data Properties
-    needs: post-build
-    if: needs.post-build.outputs.IS_TAG == 'true'
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        repos: [tinkar-example-data-test]
-    steps:
-      - name: Trigger Repository Dispatch
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
-          https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
-          -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{github.event.workflow_run.head_branch}}", "origin_repo": "${{ github.event.repository.name }}"}}'
+            

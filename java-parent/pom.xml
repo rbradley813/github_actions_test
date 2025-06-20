@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>dev.ikm.build</groupId>
-        <artifactId>gitub_actions_test_parent</artifactId>
-        <version>12.56.0-SNAPSHOT</version>
+        <groupId>dev.ikm.test-env</groupId>
+        <artifactId>parent-test</artifactId>
+        <version>12.45.0-SNAPSHOT</version>
     </parent>
-    <artifactId>gitub_actions_test_java-parent</artifactId>
+    <artifactId>java-parent-test</artifactId>
     <name>Java Parent</name>
     <description>
         The Java Parent that helps to define the build processes that should be used across projects. This is versioned
@@ -21,18 +21,18 @@
     <properties>
         <!-- make sure to change the hard coded java version in the enforcer as well -->
 
-        <java.version>21</java.version>
+        <java.version>23</java.version>
 
         <!-- Default Lifecycle additions -->
         <maven.resources-plugin.version>3.2.0</maven.resources-plugin.version>
-        <maven.surefire-plugin.version>3.2.1</maven.surefire-plugin.version>
-        <maven.surefire-report-plugin.version>3.2.1</maven.surefire-report-plugin.version>
-        <maven.failsafe-plugin.version>3.2.1</maven.failsafe-plugin.version>
-        <maven.surefire-junit-platform.version>3.2.1</maven.surefire-junit-platform.version>
-        <maven.compiler-plugin.version>3.10.1</maven.compiler-plugin.version>
-        <maven.jar-plugin.version>3.3.0</maven.jar-plugin.version>
+        <maven.surefire-plugin.version>3.5.3</maven.surefire-plugin.version>
+        <maven.surefire-report-plugin.version>3.5.3</maven.surefire-report-plugin.version>
+        <maven.failsafe-plugin.version>3.5.3</maven.failsafe-plugin.version>
+        <maven.surefire-junit-platform.version>3.5.3</maven.surefire-junit-platform.version>
+        <maven.compiler-plugin.version>3.14.0</maven.compiler-plugin.version>
+        <maven.jar-plugin.version>3.4.2</maven.jar-plugin.version>
         <maven.war-plugin.version>3.4.0</maven.war-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven.resources-plugin.version>3.3.1</maven.resources-plugin.version>
 
@@ -41,19 +41,21 @@
         <auto-service.version>1.0.1</auto-service.version>
 
         <!-- Style and Code Quality Check Plugins -->
-        <maven.checkstyle-plugin.version>3.3.0</maven.checkstyle-plugin.version>
-        <checkstyle.version>10.12.2</checkstyle.version>
-        <maven-pmd-plugin.version>3.21.0</maven-pmd-plugin.version>
-        <maven.jacoco-plugin.version>0.8.11</maven.jacoco-plugin.version>
-        <maven.spotbugs-plugin.version>4.7.3.6</maven.spotbugs-plugin.version>
+        <maven.checkstyle-plugin.version>3.6.0</maven.checkstyle-plugin.version>
+        <checkstyle.version>10.23.1</checkstyle.version>
+        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
+        <maven.jacoco-plugin.version>0.8.13</maven.jacoco-plugin.version>
+        <maven.spotbugs-plugin.version>4.9.3.0</maven.spotbugs-plugin.version>
         <jlgrock.checkstyle.version>2.1.0</jlgrock.checkstyle.version>
         <maven.pom-check-maven-plugin.version>1.0.0</maven.pom-check-maven-plugin.version>
-        <maven.mycila.version>2.2.0</maven.mycila.version>
-        <junit.version>5.10.0</junit.version>
-        <slf4j.version>2.0.13</slf4j.version>
-        <tinkar-core-snapshot.version>1.7.0-20241220.152851-1</tinkar-core-snapshot.version>
+        <junit.version>5.12.2</junit.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <log4j.version>3.0.0-alpha1</log4j.version>
 
         <eclipse-plugin.version>1.0.0</eclipse-plugin.version>
+
+        <surefireArgLine></surefireArgLine> <!-- surefireArgLine must be present even if blank to avoid errors -->
+        <failsafeArgLine></failsafeArgLine> <!-- failsafeArgLine must be present even if blank to avoid errors -->
     </properties>
 
     <dependencyManagement>
@@ -67,30 +69,20 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
+                <artifactId>slf4j-bom</artifactId>
                 <version>${slf4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>test</scope>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-            
-                <dependency>
-                     <groupId>dev.ikm.tinkar</groupId>
-                     <artifactId>composer</artifactId>
-                    <version>${tinkar-core-snapshot.version}</version>
-                </dependency>
         </dependencies>
     </dependencyManagement>
-
-      <dependencies>
-            <dependency>
-                    <groupId>dev.ikm.tinkar</groupId>
-                     <artifactId>composer</artifactId>
-                </dependency>
-        </dependencies>
 
     <build>
         <pluginManagement>
@@ -108,12 +100,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire-plugin.version}</version>
+                    <configuration>
+                        <useModulePath>true</useModulePath> <!-- default is true, just being explicit -->
+                        <argLine>@{surefireArgLine}</argLine> <!-- Sets the VM argument line used when unit tests are run -->
+                    </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven.failsafe-plugin.version}</version>
+                    <configuration>
+                        <useModulePath>true</useModulePath> <!-- default is true, just being explicit -->
+                        <argLine>@{failsafeArgLine}</argLine> <!-- Sets the VM argument line used when integration tests are run -->
+                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -205,7 +205,6 @@
         </pluginManagement>
 
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -236,9 +235,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -320,28 +321,6 @@
             <build>
                 <!-- apply licenses to all java source files -->
                 <plugins>
-                    <plugin>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>apply-license-to-source</id>
-                                <goals>
-                                    <goal>format</goal>
-                                </goals>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <licenseSets>
-                                        <licenseSet>
-                                            <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
-                                        </licenseSet>
-                                    </licenseSets>
-                                    <basedir>${basedir}/src/main/java</basedir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                     <!-- Generate Java Doc jar -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -422,29 +401,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
-                    <!-- apply licenses to all java test source files -->
-                    <plugin>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>apply-license-to-test-source</id>
-                                <goals>
-                                    <goal>format</goal>
-                                </goals>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <licenseSets>
-                                        <licenseSet>
-                                            <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
-                                        </licenseSet>
-                                    </licenseSets>
-                                    <basedir>${basedir}/src/test/java</basedir>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -465,10 +421,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <useModulePath>false</useModulePath>
-                            <argLine>${surefireArgLine}</argLine>
-                        </configuration>
                     </plugin>
 
                     <!-- Turn on the failsafe plugin as part of the integration test in the build lifecycle -->
@@ -494,9 +446,6 @@
                         <configuration>
                             <forkCount>0.5C</forkCount>
                             <reuseForks>false</reuseForks>
-                            <useModulePath>true</useModulePath> <!-- default is true, just being explicit -->
-                            <!-- Sets the VM argument line used when integration tests are run. -->
-                            <argLine>${failsafeArgLine}</argLine>
                         </configuration>
                     </plugin>
 

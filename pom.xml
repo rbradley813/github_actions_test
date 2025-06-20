@@ -3,15 +3,15 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>dev.ikm.build</groupId>
-    <artifactId>gitub_actions_test_parent</artifactId>
-    <version>12.56.0-SNAPSHOT</version>
-    <name>General Build Parent Test</name>
+    <groupId>dev.ikm.test-env</groupId>
+    <artifactId>parent-test</artifactId>
+    <version>12.45.0-SNAPSHOT</version>
+    <name>General Build Parent</name>
     <description>
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
         Package type. This is versioned and if you want to use a different version of the pom, you can simply change
         the parent version and it will adjust all of the properties being used throughout, as the properties and
-        plugins will be inherited by subprojects
+        plugins will be inherited by subprojects.
     </description>
     <packaging>pom</packaging>
 
@@ -56,43 +56,50 @@
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- Java and Maven versions -->
+        <java.version>23</java.version>
+        <maven.version>3.9.9</maven.version>
+
+
         <!-- Clean Lifecycle -->
-        <maven.clean-plugin.version>3.1.0</maven.clean-plugin.version>
+        <maven.clean-plugin.version>3.4.1</maven.clean-plugin.version>
 
         <!-- POM Lifecycle -->
-        <maven.plugin-plugin.version>3.6.1</maven.plugin-plugin.version>
-        <maven.install-plugin.version>3.1.1</maven.install-plugin.version>
-        <maven.deploy-plugin.version>3.1.1</maven.deploy-plugin.version>
+        <maven.plugin-plugin.version>3.15.1</maven.plugin-plugin.version>
+        <maven.install-plugin.version>3.1.4</maven.install-plugin.version>
+        <maven.deploy-plugin.version>3.1.4</maven.deploy-plugin.version>
 
         <!-- Site Lifecycle -->
-        <maven.site.plugin>3.9.1</maven.site.plugin>
-        <maven.versions.plugin>2.15.0</maven.versions.plugin>
-        <maven.project-info-reports-plugin.version>3.4.5</maven.project-info-reports-plugin.version>
+        <maven.site.plugin>3.21.0</maven.site.plugin>
+        <maven.versions.plugin>2.18.0</maven.versions.plugin>
+        <maven.project-info-reports-plugin.version>3.9.0</maven.project-info-reports-plugin.version>
 
         <!-- Command Line tooling -->
-        <maven.dependency-plugin.version>3.6.0</maven.dependency-plugin.version>
-        <maven.assembly.version>3.6.0</maven.assembly.version>
-        <maven.wrapper-plugin.version>3.2.0</maven.wrapper-plugin.version>
+        <maven.dependency-plugin.version>3.8.1</maven.dependency-plugin.version>
+        <maven.assembly-plugin.version>3.7.1</maven.assembly-plugin.version>
+        <maven.assembly.version>${maven.assembly-plugin.version}</maven.assembly.version>
+        <maven.wrapper-plugin.version>3.3.2</maven.wrapper-plugin.version>
 
         <!-- Release plugins -->
-        <maven.gpg-plugin.version>3.1.0</maven.gpg-plugin.version>
-        <maven.enforcer-plugin.version>3.3.0</maven.enforcer-plugin.version>
+        <maven.gpg-plugin.version>3.2.7</maven.gpg-plugin.version>
+        <maven.enforcer-plugin.version>3.5.0</maven.enforcer-plugin.version>
         <semver-enforcer-rule.version>0.9.33</semver-enforcer-rule.version>
         <maven.directory.plugin>1.0</maven.directory.plugin>
         <!-- Google license plugin-->
         <maven-license-plugin.version>4.1</maven-license-plugin.version>
         <!-- Mojohaus license plugin-->
-        <maven-mojo-license-plugin.version>2.2.0</maven-mojo-license-plugin.version>
+        <maven-mojo-license-plugin.version>2.5.0</maven-mojo-license-plugin.version>
         <maven.changes-plugin.version>2.12.1</maven.changes-plugin.version>
 
-        <maven.sonarqube.version>3.9.1.2184</maven.sonarqube.version>
+        <maven.sonarqube.version>5.1.0.4751</maven.sonarqube.version>
         <maven.github-flow.version>1.21.1-r4</maven.github-flow.version>
 
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <!-- <tinkar-core-snapshot.version>1.98.0</tinkar-core-snapshot.version> -->
+        <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+
+        <maven.antrun.plugin>3.1.0</maven.antrun.plugin>
 
         <!--properties required for sonarqube analysis-->
         <sonar.organization>ikmdev</sonar.organization>
@@ -102,26 +109,6 @@
     <modules>
         <module>java-parent</module>
     </modules>
-
-
-     <!-- <dependencyManagement>
-            <dependencies>
-                <dependency>
-                     <groupId>dev.ikm.tinkar</groupId>
-                     <artifactId>composer</artifactId>
-                    <version>${tinkar-core-snapshot.version}</version>
-                </dependency>
-            </dependencies>
-        </dependencyManagement> -->
-
-        <!-- <dependencies>
-            <dependency>
-                    <groupId>dev.ikm.tinkar</groupId>
-                     <artifactId>composer</artifactId>
-                </dependency>
-        </dependencies> -->
-
-         
 
     <build>
         <pluginManagement>
@@ -193,51 +180,69 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven.enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>(3.9,)</version>
+                                    </requireMavenVersion>
+                                </rules>    
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-java</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${java.version}</version>
+                                    </requireJavaVersion>
+                                </rules>    
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
 
-                <!-- Adds the license headers to the top of each file -->
-                <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>${maven-license-plugin.version}</version>
-                    <configuration>
-                        <properties>
-                            <owner>${project.organization.name}</owner>
-                            <email>support@ikm.dev</email>
-                        </properties>
-                        <excludes>
-                            <exclude>**/*.md</exclude>
-                            <exclude>**/.editorconfig</exclude>
-                            <exclude>**/.gitignore</exclude>
-                            <exclude>**/.gitattributes</exclude>
-                            <exclude>**/.dockerignore</exclude>
-                            <exclude>**/*.yaml</exclude>
-                            <exclude>**/*.yml</exclude>
-                            <exclude>**/.mvn/**/*</exclude>
-                            <exclude>**/src/test/resources/**</exclude>
-                            <exclude>**/src/main/resources/**</exclude>
-                            <exclude>**/*.cmd</exclude>
-                            <exclude>**/*.bat</exclude>
-                            <exclude>**/*.sh</exclude>
-                            <exclude>**/pom.xml</exclude>
-                            <exclude>**/Jenkinsfile</exclude>
-                            <exclude>**/Jenkinsfile.*</exclude>
-                            <exclude>**/LICENSE*</exclude>
-                            <exclude>**/*.txt</exclude>
-                            <exclude>**/*.md</exclude>
-                            <exclude>src/test/resources/**</exclude>
-                            <exclude>src/main/resources/**</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <!-- Google license plugin-->
+                <!-- Maven Versions plugin-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>${maven.versions.plugin}</version>
+                    <configuration>
+                        <ruleSet>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>.+-(alpha|beta).+</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>.+-(M|m).+</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>.+-(RC|rc).+</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>(.+-SNAPSHOT|.+-M\d)</version>
+                            </ignoreVersion>
+                        </ruleSet>
+                    </configuration>
                 </plugin>
 
                 <!-- Mojohaus license plugin-->
@@ -317,20 +322,27 @@
                     <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
 
+                <!-- Used for executing tasking that does not fit into Maven cleanly -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven.antrun.plugin}</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>dev.ikm</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <licenseName>apache_v2</licenseName>
                 </configuration>
+            </plugin>
+             <plugin>
+                <groupId>dev.ikm</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -459,55 +471,7 @@
                 </plugins>
             </build>
         </profile>
-<profile>
-            <id>create-installer</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <jpackage.app.name>Komet</jpackage.app.name>
-                <jpackage.app.version>${project.version}</jpackage.app.version>
-                <jpackage.app.dest>target/dist/installer</jpackage.app.dest>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.panteleyev</groupId>
-                        <artifactId>jpackage-maven-plugin</artifactId>
-                        <configuration>
-                            <name>${jpackage.app.name}</name>
-                            <appVersion>${jpackage.app.version}</appVersion>
-                            <!-- Requires Semantic Versioning with major version > zero -->
-                            <destination>${jpackage.app.dest}</destination>
-                            <resourceDir>${jpackage.resourceDir}</resourceDir>
-                            <type>${jpackage.type}</type>
-                            <icon>${jpackage.icon}</icon>
-                            <vendor>IKM</vendor>
-                            <runtimeImage>target/kometRuntimeImage</runtimeImage>
-                            <module>dev.ikm.komet.application/dev.ikm.komet.app.App</module>
-                            <javaOptions>
-                                <option>-Xmx8g</option>
-                                <option>--add-opens</option>
-                                <option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
-                                <option>--add-exports</option>
-                                <option>javafx.controls/com.sun.javafx.scene.control.behavior=dev.ikm.komet.navigator</option>
-                            </javaOptions>
-                            <!-- Windows Options - ignored by other Operating Systems -->
-                            <winMenu>true</winMenu>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>Installer</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>jpackage</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+
         <profile>
             <!-- To disable this, use something like "mvn install -P!codeQuality" -->
             <id>codeQuality</id>
@@ -571,6 +535,32 @@
                                         </requireProperty>
                                     </rules>
                                     <fail>true</fail>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>enforce-maven</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireMavenVersion>
+                                            <version>(3.9,)</version>
+                                        </requireMavenVersion>
+                                    </rules>    
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>enforce-java</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>${java.version}</version>
+                                        </requireJavaVersion>
+                                    </rules>    
                                 </configuration>
                             </execution>
                         </executions>
@@ -877,8 +867,7 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <stagingProfileId>4b1399ab6b73fe</stagingProfileId>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
 
