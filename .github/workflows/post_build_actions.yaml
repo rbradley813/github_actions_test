@@ -40,19 +40,19 @@ jobs:
             gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
             sonarcloud_token: ${{ secrets.SONAR_TOKEN }}
 
-  repository-dispatch:
-    name: Update Data Properties
-    needs: post-build
-    if: needs.post-build.outputs.IS_TAG == 'true'
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        repos: [tinkar-example-data-test]
-    steps:
-      - name: Trigger Repository Dispatch
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
-          https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
-          -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{github.event.workflow_run.head_branch}}", "origin_repo": "${{ github.event.repository.name }}"}}'
+  # repository-dispatch:
+  #   name: Update Data Properties
+  #   needs: post-build
+  #   if: needs.post-build.outputs.IS_TAG == 'true'
+  #   runs-on: ubuntu-24.04
+  #   strategy:
+  #     matrix:
+  #       repos: [tinkar-example-data-test]
+  #   steps:
+  #     - name: Trigger Repository Dispatch
+  #       run: |
+  #         curl -X POST \
+  #         -H "Accept: application/vnd.github.v3+json" \
+  #         -H "Authorization: token ${{secrets.IKMDEVOPS_PAT_TOKEN}}" \
+  #         https://api.github.com/repos/ikmdev/${{matrix.repos}}/dispatches \
+  #         -d '{"event_type":"update-repository-dispatch-trigger","client_payload":{"artifactID": "${{needs.post-build.outputs.ARTIFACT_ID}}", "version":"${{github.event.workflow_run.head_branch}}", "origin_repo": "${{ github.event.repository.name }}"}}'
