@@ -100,7 +100,6 @@
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
 
         <maven.antrun.plugin>3.1.0</maven.antrun.plugin>
-        <sonatype.central.plugin.version>0.8.0</sonatype.central.plugin.version>
 
         <!--properties required for sonarqube analysis-->
         <sonar.organization>ikmdev</sonar.organization>
@@ -303,11 +302,11 @@
                     </configuration>
                 </plugin>
 
-                <!-- This plugin is publishing to Central Portal Maven Central Repository -->
+                <!-- This plugin stage the artifacts to the OSSRH Repository, release and sync them with Central Repository -->
                 <plugin>
-                    <groupId>org.sonatype.central</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${sonatype.central.plugin.version}</version>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-maven-plugin.version}</version>
                 </plugin>
 
                 <!-- This plugin contains various small independent goals to assist with the Maven build lifecycle -->
@@ -692,14 +691,25 @@
 
 
         <profile>
-            <id>emptySourceJavadocMavenCentralRepository</id>
+            <id>emptySourceJavadocOSSRH</id>
 
             <activation>
                 <property>
-                    <name>repositoryIdMavenCentralRepository</name>
+                    <name>repositoryIdOSSRH</name>
                     <value>true</value>
                 </property>
             </activation>
+
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>maven-releases</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
 
             <build>
                 <plugins>
@@ -744,15 +754,25 @@
         </profile>
 
         <profile>
-            <id>sourceJavadocMavenCentralRepository</id>
+            <id>sourceJavadocOSSRH</id>
 
             <activation>
                 <property>
-                    <name>repositoryIdMavenCentralRepository</name>
+                    <name>repositoryIdOSSRH</name>
                     <value>true</value>
                 </property>
             </activation>
 
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>maven-releases</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
 
             <build>
                 <plugins>
@@ -796,14 +816,25 @@
         </profile>
 
         <profile>
-            <id>stageMavenCentralRepository</id>
+            <id>stageOSSRH</id>
 
             <activation>
                 <property>
-                    <name>repositoryIdMavenCentralRepository</name>
+                    <name>repositoryIdOSSRH</name>
                     <value>true</value>
                 </property>
             </activation>
+
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>maven-releases</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
 
             <build>
                 <plugins>
@@ -830,13 +861,13 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>org.sonatype.central</groupId>
-                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
                         <extensions>true</extensions>
                         <configuration>
-                            <publishingServerId>central</publishingServerId>
-                            <autoPublish>true</autoPublish>
-                            <waitUntil>published</waitUntil>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
 
