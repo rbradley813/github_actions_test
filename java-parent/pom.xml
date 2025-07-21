@@ -18,7 +18,7 @@
     </description>
     <packaging>pom</packaging>
 
-    <properties>
+   <properties>
         <!-- make sure to change the hard coded java version in the enforcer as well -->
 
         <java.version>23</java.version>
