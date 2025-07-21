@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>dev.ikm.test-env</groupId>
-        <artifactId>parent-test</artifactId>
-        <version>12.54.0-SNAPSHOT</version>
+        <groupId>dev.ikm.build</groupId>
+        <artifactId>gitub_actions_test_parent</artifactId>
+        <version>1.64.0-SNAPSHOT</version>
     </parent>
-    <artifactId>java-parent-test</artifactId>
-    <name>Java Parent</name>
+    <artifactId>gitub_actions_test_java-parent</artifactId>
+    <name>GitHub Actions Test Java Parent</name>
     <description>
         The Java Parent that helps to define the build processes that should be used across projects. This is versioned
         and if you want to use a different version of the pom, you can simply change the parent version, and it will
@@ -43,7 +43,7 @@
         <!-- Style and Code Quality Check Plugins -->
         <maven.checkstyle-plugin.version>3.6.0</maven.checkstyle-plugin.version>
         <checkstyle.version>10.23.1</checkstyle.version>
-        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
+        <maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
         <maven.jacoco-plugin.version>0.8.13</maven.jacoco-plugin.version>
         <maven.spotbugs-plugin.version>4.9.3.0</maven.spotbugs-plugin.version>
         <jlgrock.checkstyle.version>2.1.0</jlgrock.checkstyle.version>
@@ -500,7 +500,6 @@
                         <configuration>
                             <failurePriority>1</failurePriority>
                             <failOnViolation>false</failOnViolation>
-                            <aggregate>true</aggregate>
                              <targetJdk>20</targetJdk>
                         </configuration>
                         <executions>

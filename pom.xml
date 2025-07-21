@@ -3,10 +3,10 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>dev.ikm.test-env</groupId>
-    <artifactId>parent-test</artifactId>
-    <version>12.54.0-SNAPSHOT</version>
-    <name>General Build Parent</name>
+    <groupId>dev.ikm.build</groupId>
+    <artifactId>gitub_actions_test_parent</artifactId>
+    <version>1.64.0-SNAPSHOT</version>
+    <name>GitHub Actions General Build Parent</name>
     <description>
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
         Package type. This is versioned and if you want to use a different version of the pom, you can simply change
@@ -94,13 +94,13 @@
         <maven.sonarqube.version>5.1.0.4751</maven.sonarqube.version>
         <maven.github-flow.version>1.21.1-r4</maven.github-flow.version>
 
-        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+
+        <sonatype.central.plugin.version>0.8.0</sonatype.central.plugin.version> <!-- Property for deploying to Maven Central -->
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
 
         <maven.antrun.plugin>3.1.0</maven.antrun.plugin>
-        <sonatype.central.plugin.version>0.8.0</sonatype.central.plugin.version>
 
         <!--properties required for sonarqube analysis-->
         <sonar.organization>ikmdev</sonar.organization>
@@ -303,7 +303,7 @@
                     </configuration>
                 </plugin>
 
-                <!-- This plugin is publishing to Central Portal Maven Central Repository -->
+                <!-- This plugin stage the artifacts to the Central Portal Repository -->
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
@@ -753,7 +753,6 @@
                 </property>
             </activation>
 
-
             <build>
                 <plugins>
                     <!-- Generate Java Doc jar -->
@@ -837,6 +836,7 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
                             <waitUntil>published</waitUntil>
+                            <waitMaxTime>14400</waitMaxTime>
                         </configuration>
                     </plugin>
 
