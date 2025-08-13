@@ -1,4 +1,4 @@
-# Build Parent
+# GitHub Actions Test
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=ikmdev_tinkar-core)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ikmdev_tinkar-core&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ikmdev_tinkar-core)
@@ -17,8 +17,8 @@ Automation/Devops Team
 
 Required for running this:
 
-1. Download and install Open JDK Java 23 (Azul preferred)
-2. Download and install Apache Maven 3.9.9 or later
+1. Download and install Open JDK Java 24 (Azul preferred)
+2. Download and install Apache Maven 3.9.11 or later
 3. Download and install Git
 
 ## Building and Running
