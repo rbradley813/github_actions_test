@@ -51,7 +51,6 @@
     </organization>
 
     <properties>
-        <!-- adding this comment as part of the merge hook test -->
         <!-- Project Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
