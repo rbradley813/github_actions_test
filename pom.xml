@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.ikm.build</groupId>
     <artifactId>gitub_actions_test_parent</artifactId>
-    <version>12.59.0-SNAPSHOT</version>
+    <version>12.59.0-test-merge-hook-SNAPSHOT</version>
     <name>GitHub Actions General Build Parent</name>
     <description>
         The General Parent that helps to define the build processes that should be used across projects, regardless of.
@@ -51,6 +51,7 @@
     </organization>
 
     <properties>
+        <!-- adding this comment as part of the merge hook test -->
         <!-- Project Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
