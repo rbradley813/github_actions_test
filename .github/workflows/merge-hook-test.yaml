@@ -1,0 +1,41 @@
+name: Update Version on PR Merge to Main
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  update-version:
+    # Only run if the PR was actually merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '24'
+          distribution: 'zulu'
+
+      - name: Extract version from POM
+        id: version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "number=$VERSION-test" >> $GITHUB_OUTPUT
+
+      - name: Set version in POM
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.number }} -DgenerateBackupPoms=false
+
+      - name: Commit version update
+        run: |
+          git add pom.xml
+          git diff --staged --quiet || git commit -m "Update version to ${{ steps.version.outputs.number }} after PR merge"
+          git push
