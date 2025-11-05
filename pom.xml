@@ -51,6 +51,7 @@
     </organization>
 
     <properties>
+        <!-- comment for checkpoint-breaking commit test -->
         <!-- Project Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
